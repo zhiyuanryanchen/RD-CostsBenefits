@@ -1,0 +1,245 @@
+
+\section{Computation}
+I refer to \citet{farmer2017} for the discretization of non-linear Markov process. The implementation of nested fixed point algorithm is explained below.
+
+\subsection{Preparation}
+\paragraph{Profit function}
+
+I normalize the productivity with the constant $\mu_{0}$ in the
+empirical model. From the estimation equation, we can write the profit
+as:
+\begin{equation}
+\hat{r}_{it}\left(\hat{\phi}_{it}\right)=\hat{\mu}_{0}+\hat{\mu}_{t}+\left(1-\hat{\sigma}_{j}\right)\hat{\rho}_{0}+\left(1-\hat{\sigma}_{j}\right)\hat{\beta}_{k}k_{it}+\left(1+\hat{\theta}_{j}\right)\hat{\beta}_{a}a_{it}-\left(1+\hat{\theta}_{j}\right)\hat{\phi}_{it}
+\end{equation}
+It follows that the profit can be calculated as 
+\begin{equation}
+\pi_{it}\left(\hat{\phi}_{it}\right)=-\frac{1}{\hat{\theta}_{j}}\exp\left(\hat{r}_{it}\left(\hat{\phi}_{it}\right)\right)
+\end{equation}
+
+\paragraph{Choose the grid points}
+
+We perform the computation by industry. Several coefficients are specific
+to each industry: $\mu_{0}$, $\rho_{0}$, and $\sigma_{j}$. Note
+that we discretize the productivity into 200 grid points, and age
+into 4 groups. To implement the estimation, I use the trapezoid method
+to discretize the capital space in evenly distributed 100 points.
+Therefore, we are encountered with $100\times4\times4=1600$ types
+of firms. For each type of firm, we solve the value function for $100\times2=200$
+states. In the end, we solve $1600\times200=320000$ value functions.
+We compute the value function by industry by industry. 
+
+\subsection{Inner loop: Value function iteration}
+
+Given $\left(\phi_{it},\,k_{it},\,a_{it}\right),$ we use $V_{d}$
+to denote $V\left(\phi_{it},d_{it-1}=d;\,k_{it},a_{it}\right)$.
+We also define $\gamma_{it}^{d}\equiv\gamma_{it}\left(d_{it-1}=d,k_{it};\,\kappa^{m},\,\kappa^{s}\right)$,
+for $d\in\left\{ 0,\,1\right\} $, and $\kappa\equiv\left(\kappa^{s},\,\kappa^{m}\right)$
+be the parameter to be estimated. Employing the exponential distribution,
+we can express the value function as 
+\begin{align*}
+V_{d} & =\Pi_{it}\left(\phi_{it},\mathbf{S}_{it}\right)+\int_{0}^{\Delta \mathbf{E}V}\left(\beta\mathbf{E}V_{1}-c\right)dH\left(c\right)+\beta\int_{\Delta \mathbf{E}V}^{\infty}\mathbf{E}V_{0}dG\left(c\right)\\
+ & =\Pi_{it}\left(\phi_{it},\mathbf{S}_{it}\right)+ \beta \mathbf{E}V_{1}\left[1-\exp(-\frac{\Delta\mathbb{E}V}{\gamma_{it}^{d}})\right]+\left(\Delta \mathbf{E}V+\gamma_{it}^{d}\right)\exp\left(-\frac{\Delta\mathbb{E}V}{\gamma_{it}^{d}}\right)\\
+ & -\gamma_{it}^{d}+\mathbf{E}V{}_{0}\exp\left({-\frac{\Delta\mathbb{E}V}{\gamma_{it}^{d}}}\right)
+\end{align*}
+where $\Delta \mathbf{E}V=\beta\mathbf{E}V_{1}-\beta\mathbf{E}V_{0}$. Therefore the expression of $V_{d}$
+can be simplified as 
+\begin{equation}
+V_{d}=\Pi_{it}\left(\phi_{it},\mathbf{S}_{it}\right)+\gamma_{it}^{d}\left(\exp\left(-\frac{\Delta \mathbf{E}V}{\gamma_{it}^{d}}\right)-1\right)+\mathbf{E}V_{1},\,\text{for }d\in\left\{ 0,\,1\right\} \label{Vd}
+\end{equation}
+In computing the value functions, $V_{d}$ is a $200$ by 1 vector
+given capital, age, and industry. Let $p_{mn}=Pr\left(n_{t+1}=m,b_{t+1}=n|d_{t}=1\right)$,
+for $m,\,n\in\left\{ 0,1\right\} $, and further denote $P_{mn}$
+as the corresponding transition matrix of the productivity and $P_{0}$
+as the transition matrix of productivity when $d_{t}=0$. then Equation
+(\ref{Vd}) can be transformed as 
+\begin{align}
+V_{1} & =\Pi\left(\phi\right)-\beta\gamma^{1}\left(1-\exp\left(-\frac{\Delta EV}{\gamma^{1}}\right)\right)+\beta\left(\sum_{m}\sum_{n}p_{mn}P_{mn}\right)V_{1}\label{V1}\\
+V_{0} & =\pi\left(\phi\right)-\beta\gamma^{0}\left(1-\exp\left(-\frac{\Delta EV}{\gamma^{0}}\right)\right)+\beta\left(\sum_{m}\sum_{n}p_{mn}P_{mn}\right)V_{1}\label{V0}
+\end{align}
+Denote $P_{1}=\beta\left(\sum_{m}\sum_{n}p_{mn}P_{mn}\right)$, then
+\[
+V_{1}=\left(I-\beta P_{1}\right)^{-1}\left[\pi\left(\phi\right)-\beta\gamma^{1}\left(1-\exp\left(-\frac{\Delta EV}{\gamma^{1}}\right)\right)\right]
+\]
+ because $\Delta EV=P_{1}V_{1}-P_{0}V_{0}$, it follows that:
+\begin{align}
+\Delta EV & =\left(I-\beta P_{0}\right)P_{1}\left(I-\beta P_{1}\right)^{-1}\left[\pi\left(\phi\right)-\beta\gamma^{1}\left(1-\exp\left(-\frac{\Delta EV}{\gamma^{1}}\right)\right)\right]\label{DEV}\\
+ & \quad-P_{0}\left[\pi\left(\phi\right)-\beta\gamma^{0}\left(1-\exp\left(-\frac{\Delta EV}{\gamma^{0}}\right)\right)\right]\nonumber 
+\end{align}
+We use equation (\ref{DEV}) to solve for $\Delta EV$ and then we
+use equations (\ref{V1}) and (\ref{V0}) to solve for $V_{1}$ and
+$V_{0}$. Use $T_{\kappa}$ as the linear operator applied to $\Delta EV$,
+it is easy to show that $T_{\kappa}$ is a contraction mapping. Then
+$\Delta EV$ is a fixed point such that 
+\[
+T_{\kappa}\left(\Delta EV\right)=\Delta EV
+\]
+.Now we are in the position to use Newton-Kantorovich iterations.
+First note that the Frech\'{e}t derivative of $T_{\kappa}$ with
+respect to $\Delta EV$ is:
+\begin{align}
+T_{\kappa}' & =\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\Delta EV}\\
+ & =\beta\left(\beta P_{0}-I\right)P_{1}\left(I-\beta P_{1}\right)^{-1}\exp\left[\text{diag}\left\{ -\frac{\Delta EV_{i}}{\gamma^{1}}\right\} \right]\nonumber \\
+ & +\beta P_{0}\exp\left[\text{diag}\left\{ -\frac{\Delta EV_{i}}{\gamma^{0}}\right\} \right]\nonumber 
+\end{align}
+where 
+\[
+\text{diag}\left\{ -\frac{\Delta EV_{i}}{\gamma^{d}}\right\} =\left[\begin{array}{cccc}
+-\frac{\Delta EV_{1}}{\gamma^{d}} & 0 & \cdots & 0\\
+0 & -\frac{\Delta EV_{2}}{\gamma^{d}} & \cdots & 0\\
+\vdots & \vdots & \ddots & \vdots\\
+0 & 0 & \cdots & -\frac{\Delta EV_{n}}{\gamma^{d}}
+\end{array}\right]
+\]
+Using the invertibility of $\left[I-T_{\kappa}'\right]$ the $n$th
+iteration in the Newton-Kantorovich algorithm is 
+\[
+\Delta EV_{n+1}=\Delta EV_{n}-\left[I-T_{\kappa}'\right]^{-1}\left(I-T_{\kappa}\right)\left(\Delta EV_{n}\right)
+\]
+We set the tolerance as $e^{-6}$; the iteration stops when $\|\Delta EV_{n+1}-\Delta EV_{n}\|\leq e^{-6}$. 
+
+\subsection{Outer loop: BHHH optimization algorithm}
+
+The outer loop solves following problem:
+\[
+\max_{\kappa^{s},\kappa^{m}}\sum_{i}\sum_{t}l_{it}\left(\kappa,\,\Delta EV_{it}\right)
+\]
+ where 
+\begin{align}
+l_{it}\left(\kappa,\,\Delta EV_{it}\right) & =\log\left\{ d_{it}Pr\left(d_{it}=1|\kappa,d_{it-1}\right)+\left(1-d_{it}\right)Pr\left(d_{it}=0|\kappa,d_{it-1}\right)\right\} \label{llf}\\
+ & =\log\left\{ \left(2d_{it}-1\right)\Pr\left(d_{it}=1|\kappa,d_{it-1}\right)+1-d_{it}\right\} \nonumber 
+\end{align}
+where $\Delta EV_{it}=\Delta EV\left(\phi_{it}\right)$ and 
+\begin{align}
+Pr\left(d_{it}=0|\kappa,d_{it-1}\right) & =1-Pr\left(d_{it}=1|\kappa,d_{it-1}\right)\\
+ & =\exp\left\{ \frac{-\beta\Delta EV\left(\phi_{it}\right)}{\kappa^{m}d_{it-1}k_{it}+\kappa^{s}\left(1-d_{it-1}\right)k_{it}}\right\} \nonumber 
+\end{align}
+The basic parameter iteration under BHHH algorithm is:
+\begin{align*}
+\kappa_{n+1} & =\kappa_{n}+\lambda\underset{\equiv D\left(\kappa_{n}\right)}{\underbrace{\left[\sum_{i,t}\left(\frac{\partial l_{it}\left(\kappa_{n},\,\Delta EV_{it}\right)}{\partial\kappa_{n}}\right)\left(\frac{\partial l_{it}\left(\kappa_{n},\,\Delta EV_{it}\right)}{\partial\kappa_{n}'}\right)\right]^{-1}\left(\sum_{i,t}\frac{\partial l_{it}\left(\kappa_{n},\,\Delta\right)}{\partial\kappa_{n}}\right)}}
+\end{align*}
+From (\ref{llf}) we know that 
+\begin{equation}
+\frac{\partial l_{it}\left(\kappa_{n},\,\Delta EV_{it}\right)}{\partial\kappa_{n}'}=w_{it}\left[\frac{\partial Pr\left(d_{it}=1|\kappa,d_{it-1}\right)}{\partial\kappa_{n}^{s}},\,\frac{\partial Pr\left(d_{it}=1|\kappa,d_{it-1}\right)}{\partial\kappa_{n}^{m}}\right]
+\end{equation}
+where
+\begin{align*}
+w_{it} & =\frac{\left(2d_{it}-1\right)}{\left(2d_{it}-1\right)\Pr\left(d_{it}=1|\kappa,d_{it-1}\right)+1-d_{it}}\\
+\frac{\partial Pr\left(d_{it}=1|\kappa,d_{it-1}\right)}{\partial\kappa_{n}^{s}} & =\beta\frac{\frac{\partial\Delta EV_{it}}{\partial\kappa_{n}^{s}}\gamma_{it}^{d_{it-1}}-\left(1-d_{it-1}\right)k_{it}\Delta EV_{it}}{\left(\gamma_{it}^{d_{it-1}}\right)^{2}\exp\left(\frac{\beta\Delta EV_{it}}{\gamma_{it}^{d_{it-1}}}\right)}\\
+\frac{\partial Pr\left(d_{it}=1|\kappa,d_{it-1}\right)}{\partial\kappa_{n}^{m}} & =\beta\frac{\frac{\partial\Delta EV_{it}}{\partial\kappa_{n}^{m}}\gamma_{it}^{d_{it-1}}-d_{it-1}k_{it}\Delta EV_{it}}{\left(\gamma_{it}^{d_{it-1}}\right)^{2}\exp\left(\frac{\beta\Delta EV_{it}}{\gamma_{it}^{d_{it-1}}}\right)}
+\end{align*}
+where $\frac{\partial\Delta EV_{it}}{\partial\kappa^{s}}$ ($\frac{\partial\Delta EV_{it}}{\partial\kappa^{m}}$)
+is the element in 1st (2nd) column such that the corresponding productivity
+in the row is $\phi_{it}$. To finish the nested fixed point algorithm,
+we need to compute the derivatives of the expected value function,
+$\partial\Delta EV/\partial\gamma$. Applying the implicit theorem
+to $T_{\kappa}\left(\Delta EV\right)=\Delta EV$, we get 
+\[
+\frac{\partial\Delta EV}{\partial\kappa}=\left[I-T_{\kappa}'\right]^{-1}\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa}
+\]
+From (\ref{DEV}), we know that 
+\begin{align*}
+\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa} & =\left[\begin{array}{cc}
+\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa^{s}} & ,\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa^{m}}\end{array}\right]
+\end{align*}
+where 
+\begin{align*}
+\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa^{m}} & =\beta k\left(\beta P_{0}-I\right)P_{1}\left(I-\beta P_{1}\right)^{-1}\left[1-\exp\left(\frac{-\Delta EV}{\gamma^{1}}\right)-\frac{\Delta EV}{\gamma^{1}}\varodot\exp\left(\frac{-\Delta EV}{\gamma^{1}}\right)\right]\\
+\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa^{s}} & =\beta kP_{0}\left[1-\exp\left(\frac{-\Delta EV}{\gamma^{0}}\right)-\frac{\Delta EV}{\gamma^{0}}\varodot\exp\left(\frac{-\Delta EV}{\gamma^{0}}\right)\right]
+\end{align*}
+are both $200$-by-$1$ vectors and $k$ is the exogenous state variable:
+capital stock. We use $\varodot$ to denote the element-wise product.
+To determine the step size $\lambda,$ we use secant iteration to
+find the solution to $\partial f\left(\lambda\right)/\partial\kappa=0$,
+where $f\left(\lambda\right)\equiv L\left(\kappa+\lambda D\left(\kappa\right)\right)$.
+The iteration is given as:
+\begin{equation}
+\lambda_{m+1}=\lambda_{m}-\frac{\left(\lambda_{m}-\lambda_{m-1}\right)f'\left(\lambda_{m}\right)}{f'\left(\lambda_{m}\right)-f'\left(\lambda_{m-1}\right)}
+\end{equation}
+where 
+\begin{equation}
+f'\left(\lambda_{m}\right)=\sum_{i,t}\frac{\partial l_{it}\left(\kappa+\lambda_{m}D\left(\kappa_{n}\right),\,\Delta EV_{it}\right)}{\partial\kappa'}D\left(\kappa_{n}\right)
+\end{equation}
+This iteration determines the optimal step size $\lambda^{*}$. Finally,
+the iteration stops when $\|\kappa_{n+1}-\kappa_{n}\|\leq e^{-6}$. 
+
+\paragraph{Preliminary analysis on innovation and productivity}
+In this subsection, I provide
+preliminary evidence supporting that patent activities,especially on the extensive margin, is an important
+channel for firms to realize the impact of R\&D on productivity and
+hence profits. I use value added per employee as the measure of productivity,
+denoted as $lp$. This variable is usually used
+as a measure of labor productivity. In the econometric model, I use
+the $lp_{t+1}$ as the dependent variable, and use $lp_{t}$, $rd_{t}$,
+and its interactions with variables on patent activities as explanatory
+variables. 
+
+Table \ref{T8} reports the estimation results for different
+explanatory variables. In column (1), I only use current productivity
+and lagged binary indicator for R\&D as independent variables. As expected, the
+coefficient of $rd_{t}$ is positive and significant. Column (2) shows the coefficient estimates
+after we add the interaction term between R\&D status and invention
+patents (denoted as $rd_{t}\times inpat_{t+1}$) to the empirical
+model. We find that the coefficient estimate of $rd_{t}$ decreases
+compared to that in column (1). The coefficient of $rd_{t}\times inpat_{t+1}$
+is positive and statistically significant at 0.1\% significance level.
+More importantly, the magnitude of the estimate of the coefficient
+of $rd_{t}\times inpat_{t+1}$ is even larger than the estimate of
+coefficient of $rd_{t}$, implying that patents is an important channel
+through which the investment in R\&D contributes to the productivity
+growth. In comparison, column (3) shows that the contribution of utility
+patents to the realization of productivity-enhancing effect of R\&D
+activities is not statistically significant. Columns (4) and (5) shows
+that the interactive effect between invention patents and utility
+patents may not be so important for past R\&D activities to increase
+future productivity. To some extent, these results suggest that the
+patent, especially invention patent, is an important channel through
+which R\&D drives up the firm's future productivity. However,
+we need to be cautious about interpreting our estimation results.
+First, our measure of productivity is not clean as it contains information
+on the capital intensity. Second, unobserved factors that affects
+capital accumulation as well as firm's R\&D choice may cause endogeneity
+problem to the preliminary specification. In all regressions, I control for industry, year, and industry-year fixed effects. 
+
+As additional supporting evidence for that the extensive margin of
+patents matters more in terms of realizing the productivity-promoting
+effect of R\&D, I also try to re-estimate our models using a sub-sample
+containing firms that filed at least one patent application. I
+report the estimation results in Table \ref{T9}. As we can see from
+the results, the estimates for coefficients of $rd_{t}\times inpat_{t+1}$
+and $rd_{t}\times utpat_{t+1}$ are not statistically significant
+though the coefficient estimate for $rd_{t}$ is significant in columns
+(1) and (2). These results confirm that change in the extensive margin
+of patent applications is more important in explaining the different
+impacts of R\&D on productivity growth. 
+
+\begin{center}
+Table \ref{T8} here
+\par\end{center}
+
+\begin{center}
+Table \ref{T9} here
+\par\end{center}
+
+The R\&D-patent and innovation-productivity linkages are two important components of our structural model. In light of the discussion above, we use 0-1 binary variables to measure the R\&D activities, invention patents applications, and utility patents applications. Specifically, we use $rd$, $n$, and $b$ to represent the investment in R\&D, application of invention
+patents, and application of utility patents. $rd$ is equal to one
+when the firm invests in R\&D; similar definitions are applied to
+$n$ and $b$. Throughout our discussion, we do not consider design patents. 
+
+
+
+\begin{table}[H]
+\centering
+\caption{Impact of R\&D and patents on productivity: extensive margin of patents}
+\label{T8}
+\input{Table8.tex}
+\caption*{\small{}Note: all regression contain industry and industry-year fixed effects. Standard errors in parentheses.{*} \(p<0.05\), {**} \(p<0.01\), {***} \(p<0.001\)} {\small \par}
+\end{table}
+
+
+\begin{table}[H]
+\centering
+\caption{Impact of R\&D and patents on productivity: intensive margin of patents}
+\label{T9}
+\input{Table9.tex}
+\caption*{\small{}Note: all regression contain industry and industry-year fixed effects. Standard errors in parentheses.{*} \(p<0.05\), {**} \(p<0.01\), {***} \(p<0.001\)} {\small \par}
+\end{table}

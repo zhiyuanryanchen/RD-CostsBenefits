@@ -1,0 +1,186 @@
+%% LyX 2.2.3 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english]{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{babel}
+\begin{document}
+
+\title{The Costs and Benefits of Innovation in China's High-tech Industries:\\
+Computation Appendix}
+
+\author{Zhiyuan Chen}
+\maketitle
+
+\section{Discretizing non-linear Markov process}
+
+For this part, I refer to Farmer and Toda (2017). 
+
+\section{Nested fixed point algorithm}
+
+\subsection{Preparation}
+
+\paragraph{Profit function}
+
+I normalize the productivity with the constant $\psi_{0}$ in the
+empirical model. From the estimation equation, we can write the profit
+as:
+\begin{equation}
+\hat{r}_{it}\left(\hat{\omega}_{it}\right)=\hat{\psi}_{0}+\hat{\psi}_{t}+\left(1+\hat{\theta}_{j}\right)\hat{\rho}_{0}+\left(1+\hat{\theta}_{j}\right)\hat{\beta}_{k}k_{it}+\left(1+\hat{\theta}_{j}\right)\hat{\beta}_{a}a_{it}-\left(1+\hat{\theta}_{j}\right)\hat{\omega}_{it}
+\end{equation}
+It follows that the profit can be calculated as 
+\begin{equation}
+\pi_{it}\left(\hat{\omega}_{it}\right)=-\frac{1}{\hat{\theta}_{j}}\exp\left(\hat{r}_{it}\left(\hat{\omega}_{it}\right)\right)
+\end{equation}
+
+\paragraph{Choose the grid points}
+
+We perform the computation by industry. Several coefficients are specific
+to each industry: $\psi_{0}$, $\rho_{0}$, and $\theta_{j}$. Note
+that we discretize the productivity into 200 grid points, and age
+into 4 groups. To implement the estimation, I use the trapezoid method
+to discretize the capital space in evenly distributed 100 points.
+Therefore, we are encountered with $100\times4\times4=1600$ types
+of firms. For each type of firm, we solve the value function for $100\times2=200$
+states. In the end, we solve $1600\times200=320000$ value functions.
+We compute the value function by industry by industry. 
+
+\subsection{Inner loop: Value function iteration}
+
+Given $\left(\omega_{it},\,k_{it},\,a_{it}\right),$ we use $V_{d}$
+to denote $V\left(\omega_{it},rd_{it-1}=d;\,k_{it},a_{it}\right)$.
+We also define $\gamma_{it}^{d}\equiv\gamma_{it}\left(rd_{it-1}=d,k_{it};\,\kappa^{m},\,\kappa^{s}\right)$,
+for $d\in\left\{ 0,\,1\right\} $, and $\kappa\equiv\left(\kappa^{s},\,\kappa^{m}\right)$
+be the parameter to be estimated. Employing the exponential distribution,
+we can express the value function as 
+\begin{align*}
+V_{d} & =\pi_{it}\left(\omega_{it}\right)+\beta\int_{0}^{\Delta EV}\left(EV_{1}-\tau\right)dG\left(\tau\right)+\beta\int_{\Delta EV}^{\infty}EV{}_{0}dG\left(\tau\right)\\
+ & =\pi_{it}\left(\omega_{it}\right)+\beta EV_{1}\left(1-e^{-\frac{\Delta\mathbb{E}V}{\gamma_{it}^{d}}}\right)+\beta\left(\Delta EV+\gamma_{it}^{d}\right)e^{-\frac{\Delta\mathbb{E}V}{\gamma_{it}^{d}}}\\
+ & -\beta\gamma_{it}^{d}+\beta EV{}_{0}e^{-\frac{\Delta\mathbb{E}V}{\gamma_{it}^{d}}}
+\end{align*}
+where $\Delta EV=EV_{1}-EV_{0}$. Therefore the expression of $V_{d}$
+can be simplified as 
+\begin{equation}
+V_{d}=\pi_{it}\left(\omega_{it}\right)+\beta\gamma_{it}^{d}\left(\exp\left(-\frac{\Delta EV}{\gamma_{it}^{d}}\right)-1\right)+\beta EV_{1},\,\text{for }d\in\left\{ 0,\,1\right\} \label{Vd}
+\end{equation}
+In computing the value functions, $V_{d}$ is a $200$ by 1 vector
+given capital, age, and industry. Let $p_{mn}=Pr\left(n_{t+1}=m,b_{t+1}=n|rd_{t}=1\right)$,
+for $m,\,n\in\left\{ 0,1\right\} $, and further denote $P_{mn}$
+as the corresponding transition matrix of the productivity and $P_{0}$
+as the transition matrix of productivity when $rd_{t}=0$. then Equation
+(\ref{Vd}) can be transformed as 
+\begin{align}
+V_{1} & =\pi\left(\omega\right)-\beta\gamma^{1}\left(1-\exp\left(-\frac{\Delta EV}{\gamma^{1}}\right)\right)+\beta\left(\sum_{m}\sum_{n}p_{mn}P_{mn}\right)V_{1}\label{V1}\\
+V_{0} & =\pi\left(\omega\right)-\beta\gamma^{0}\left(1-\exp\left(-\frac{\Delta EV}{\gamma^{0}}\right)\right)+\beta\left(\sum_{m}\sum_{n}p_{mn}P_{mn}\right)V_{1}\label{V0}
+\end{align}
+Denote $P_{1}=\beta\left(\sum_{m}\sum_{n}p_{mn}P_{mn}\right)$, then
+\[
+V_{1}=\left(I-\beta P_{1}\right)^{-1}\left[\pi\left(\omega\right)-\beta\gamma^{1}\left(1-\exp\left(-\frac{\Delta EV}{\gamma^{1}}\right)\right)\right]
+\]
+ because $\Delta EV=P_{1}V_{1}-P_{0}V_{0}$, it follows that:
+\begin{align}
+\Delta EV & =\left(I-\beta P_{0}\right)P_{1}\left(I-\beta P_{1}\right)^{-1}\left[\pi\left(\omega\right)-\beta\gamma^{1}\left(1-\exp\left(-\frac{\Delta EV}{\gamma^{1}}\right)\right)\right]\label{DEV}\\
+ & \quad-P_{0}\left[\pi\left(\omega\right)-\beta\gamma^{0}\left(1-\exp\left(-\frac{\Delta EV}{\gamma^{0}}\right)\right)\right]\nonumber 
+\end{align}
+We use equation (\ref{DEV}) to solve for $\Delta EV$ and then we
+use equations (\ref{V1}) and (\ref{V0}) to solve for $V_{1}$ and
+$V_{0}$. Use $T_{\kappa}$ as the linear operator applied to $\Delta EV$,
+it is easy to show that $T_{\kappa}$ is a contraction mapping. Then
+$\Delta EV$ is a fixed point such that 
+\[
+T_{\kappa}\left(\Delta EV\right)=\Delta EV
+\]
+.Now we are in the position to use Newton-Kantorovich iterations.
+First note that the Frech\'{e}t derivative of $T_{\kappa}$ with
+respect to $\Delta EV$ is:
+\begin{align}
+T_{\kappa}' & =\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\Delta EV}\\
+ & =\beta\left(\beta P_{0}-I\right)P_{1}\left(I-\beta P_{1}\right)^{-1}\exp\left[\text{diag}\left\{ -\frac{\Delta EV_{i}}{\gamma^{1}}\right\} \right]\nonumber \\
+ & +\beta P_{0}\exp\left[\text{diag}\left\{ -\frac{\Delta EV_{i}}{\gamma^{0}}\right\} \right]\nonumber 
+\end{align}
+where 
+\[
+\text{diag}\left\{ -\frac{\Delta EV_{i}}{\gamma^{d}}\right\} =\left[\begin{array}{cccc}
+-\frac{\Delta EV_{1}}{\gamma^{d}} & 0 & \cdots & 0\\
+0 & -\frac{\Delta EV_{2}}{\gamma^{d}} & \cdots & 0\\
+\vdots & \vdots & \ddots & \vdots\\
+0 & 0 & \cdots & -\frac{\Delta EV_{n}}{\gamma^{d}}
+\end{array}\right]
+\]
+Using the invertibility of $\left[I-T_{\kappa}'\right]$ the $n$th
+iteration in the Newton-Kantorovich algorithm is 
+\[
+\Delta EV_{n+1}=\Delta EV_{n}-\left[I-T_{\kappa}'\right]^{-1}\left(I-T_{\kappa}\right)\left(\Delta EV_{n}\right)
+\]
+We set the tolerance as $e^{-6}$; the iteration stops when $\|\Delta EV_{n+1}-\Delta EV_{n}\|\leq e^{-6}$. 
+
+\subsection{Outer loop: BHHH optimization algorithm}
+
+The outer loop solves following problem:
+\[
+\max_{\kappa^{s},\kappa^{m}}\sum_{i}\sum_{t}l_{it}\left(\kappa,\,\Delta EV_{it}\right)
+\]
+ where 
+\begin{align}
+l_{it}\left(\kappa,\,\Delta EV_{it}\right) & =\log\left\{ rd_{it}Pr\left(rd_{it}=1|\kappa,rd_{it-1}\right)+\left(1-rd_{it}\right)Pr\left(rd_{it}=0|\kappa,rd_{it-1}\right)\right\} \label{llf}\\
+ & =\log\left\{ \left(2rd_{it}-1\right)\Pr\left(rd_{it}=1|\kappa,rd_{it-1}\right)+1-rd_{it}\right\} \nonumber 
+\end{align}
+where $\Delta EV_{it}=\Delta EV\left(\omega_{it}\right)$ and 
+\begin{align}
+Pr\left(rd_{it}=0|\kappa,rd_{it-1}\right) & =1-Pr\left(rd_{it}=1|\kappa,rd_{it-1}\right)\\
+ & =\exp\left\{ \frac{-\beta\Delta EV\left(\omega_{it}\right)}{\kappa^{m}rd_{it-1}k_{it}+\kappa^{s}\left(1-rd_{it-1}\right)k_{it}}\right\} \nonumber 
+\end{align}
+The basic parameter iteration under BHHH algorithm is:
+\begin{align*}
+\kappa_{n+1} & =\kappa_{n}+\lambda\underset{\equiv D\left(\kappa_{n}\right)}{\underbrace{\left[\sum_{i,t}\left(\frac{\partial l_{it}\left(\kappa_{n},\,\Delta EV_{it}\right)}{\partial\kappa_{n}}\right)\left(\frac{\partial l_{it}\left(\kappa_{n},\,\Delta EV_{it}\right)}{\partial\kappa_{n}'}\right)\right]^{-1}\left(\sum_{i,t}\frac{\partial l_{it}\left(\kappa_{n},\,\Delta\right)}{\partial\kappa_{n}}\right)}}
+\end{align*}
+From (\ref{llf}) we know that 
+\begin{equation}
+\frac{\partial l_{it}\left(\kappa_{n},\,\Delta EV_{it}\right)}{\partial\kappa_{n}'}=w_{it}\left[\frac{\partial Pr\left(rd_{it}=1|\kappa,rd_{it-1}\right)}{\partial\kappa_{n}^{s}},\,\frac{\partial Pr\left(rd_{it}=1|\kappa,rd_{it-1}\right)}{\partial\kappa_{n}^{m}}\right]
+\end{equation}
+where
+\begin{align*}
+w_{it} & =\frac{\left(2rd_{it}-1\right)}{\left(2rd_{it}-1\right)\Pr\left(rd_{it}=1|\kappa,rd_{it-1}\right)+1-rd_{it}}\\
+\frac{\partial Pr\left(rd_{it}=1|\kappa,rd_{it-1}\right)}{\partial\kappa_{n}^{s}} & =\beta\frac{\frac{\partial\Delta EV_{it}}{\partial\kappa_{n}^{s}}\gamma_{it}^{rd_{it-1}}-\left(1-rd_{it-1}\right)k_{it}\Delta EV_{it}}{\left(\gamma_{it}^{rd_{it-1}}\right)^{2}\exp\left(\frac{\beta\Delta EV_{it}}{\gamma_{it}^{rd_{it-1}}}\right)}\\
+\frac{\partial Pr\left(rd_{it}=1|\kappa,rd_{it-1}\right)}{\partial\kappa_{n}^{m}} & =\beta\frac{\frac{\partial\Delta EV_{it}}{\partial\kappa_{n}^{m}}\gamma_{it}^{rd_{it-1}}-rd_{it-1}k_{it}\Delta EV_{it}}{\left(\gamma_{it}^{rd_{it-1}}\right)^{2}\exp\left(\frac{\beta\Delta EV_{it}}{\gamma_{it}^{rd_{it-1}}}\right)}
+\end{align*}
+where $\frac{\partial\Delta EV_{it}}{\partial\kappa^{s}}$ ($\frac{\partial\Delta EV_{it}}{\partial\kappa^{m}}$)
+is the element in 1st (2nd) column such that the corresponding productivity
+in the row is $\omega_{it}$. To finish the nested fixed point algorithm,
+we need to compute the derivatives of the expected value function,
+$\partial\Delta EV/\partial\gamma$. Applying the implicit theorem
+to $T_{\kappa}\left(\Delta EV\right)=\Delta EV$, we get 
+\[
+\frac{\partial\Delta EV}{\partial\kappa}=\left[I-T_{\kappa}'\right]^{-1}\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa}
+\]
+From (\ref{DEV}), we know that 
+\begin{align*}
+\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa} & =\left[\begin{array}{cc}
+\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa^{s}} & ,\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa^{m}}\end{array}\right]
+\end{align*}
+where 
+\begin{align*}
+\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa^{m}} & =\beta k\left(\beta P_{0}-I\right)P_{1}\left(I-\beta P_{1}\right)^{-1}\left[1-\exp\left(\frac{-\Delta EV}{\gamma^{1}}\right)-\frac{\Delta EV}{\gamma^{1}}\varodot\exp\left(\frac{-\Delta EV}{\gamma^{1}}\right)\right]\\
+\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa^{s}} & =\beta kP_{0}\left[1-\exp\left(\frac{-\Delta EV}{\gamma^{0}}\right)-\frac{\Delta EV}{\gamma^{0}}\varodot\exp\left(\frac{-\Delta EV}{\gamma^{0}}\right)\right]
+\end{align*}
+are both $200$-by-$1$ vectors and $k$ is the exogenous state variable:
+capital stock. We use $\varodot$ to denote the element-wise product.
+To determine the step size $\lambda,$ we use secant iteration to
+find the solution to $\partial f\left(\lambda\right)/\partial\kappa=0$,
+where $f\left(\lambda\right)\equiv L\left(\kappa+\lambda D\left(\kappa\right)\right)$.
+The iteration is given as:
+\begin{equation}
+\lambda_{m+1}=\lambda_{m}-\frac{\left(\lambda_{m}-\lambda_{m-1}\right)f'\left(\lambda_{m}\right)}{f'\left(\lambda_{m}\right)-f'\left(\lambda_{m-1}\right)}
+\end{equation}
+where 
+\begin{equation}
+f'\left(\lambda_{m}\right)=\sum_{i,t}\frac{\partial l_{it}\left(\kappa+\lambda_{m}D\left(\kappa_{n}\right),\,\Delta EV_{it}\right)}{\partial\kappa'}D\left(\kappa_{n}\right)
+\end{equation}
+This iteration determines the optimal step size $\lambda^{*}$. Finally,
+the iteration stops when $\|\kappa_{n+1}-\kappa_{n}\|\leq e^{-6}$. 
+
+
+\end{document}
