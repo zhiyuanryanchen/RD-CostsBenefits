@@ -1,4 +1,104 @@
 
+\section{A Flexible Empirical Framework}\label{Sec2}
+In this section, I first briefly lay out a standard model of dynamic model with R\&D investment and patents. The basic structure of the model is similar to that considered in \cite{Awetal.2011,Doraszelski2013,Peters2016, Peters2017}, with the exception that both R\&D and patents play a role in shifting the future productivity. 
+
+\subsection{A Model of R\&D Investment}
+
+\paragraph{Production and Profits} A firm has a Cobb-Douglas production function
+\begin{equation}
+Q_{it} = \Phi_{it}K_{it}^{\beta_{k}}L_{it}^{\beta_l}M_{it}^{\beta_m}\exp{(\beta_a a_{it})}
+\end{equation}
+where $Q_{it}$ is the physical output of firm $i$ in period t, $\Phi_{it}$ is the total factor productivity, $K_{it}$ is the capital, $L_{it}$ is the labor, $M_{it}$ is the material, $a_{it}$ is the firm's age. Consider a well-behaved inverse demand equation
+\begin{equation}
+    p_{it} = D(Q_{it})
+\end{equation}
+where $p_{it}$ is the output price. To simplify the analysis, we assume that a firm treats capital and productivity as predetermined when choosing labor and materials in each period. Let $\Pi(\phi_{it},\mathbf{S}_{it})$ be the optimal profits, and $R(\phi_{it},\mathbf{S}_{it})$ be the revenue, where $\phi_{it}=\ln(\Phi_{it})$, $\mathbf{S}_{it}=(K_{it}, P_{Lit}, P_{Mit}, a_{it})$ is a vector of exogenous state variables. The cost minimization implies that
+\begin{equation}
+    \Pi(\phi_{it},\mathbf{S}_{it}) = (1-\frac{\beta_l+\beta_m}{\theta_{it}})R(\phi_{it},\mathbf{S}_{it})
+\end{equation}
+where $\theta_{it}$ is the markup. Note that when $\beta_l+\beta_m=1$, the production function is of constant return to scale in terms of $L_{it}$ and $M_{it}$.
+
+\paragraph{Productivity evolution}The firm's productivity $\phi_{it}$ is unobserved by the econometrician. R\&D investment and patenting enter the Markov process governing the productivity evolution. In particular, the dynamics of the productivity is given by
+\begin{equation}
+    \phi_{it+1} = h(\phi_{it},d_{it},\mathbf{o}_{it+1})+\epsilon_{it+1}
+\end{equation}
+where $d_{it}$ represents the R\&D investment and $\mathbf{o}_{it+1}$ is a vector summarizing the innovation outcome next period, and $\epsilon_{it+1}$ is an iid shock with a mean-zero normal distribution. Considering different types of innovation output, $\mathbf{o}_{it}$ can be a vector of process innovation and product innovation measured by the patents or other observed indicators. The marginal effects of R\&D investment and innovation output are captured by three partial derivatives $\partial h/\partial d_{it}$, $\partial h/\partial \mathbf{o}_{it+1}$, and a cross derivative $\partial ^2h/\partial d_{it} \partial \mathbf{o}_{it+1}$. Because R\&D is the fundamental source of productivity change, we impose that $ \partial h(\phi_{it}, 0, \mathbf{o}_{it+1})/\partial\mathbf{o}_{it+1} = \mathbf{0}$. This implies that without R\&D investment, we should expect no endogenous productivity growth, though we can see productivity growth through the channel of exogenous shocks. The cross-derivative $\partial ^2h/\partial d_{it} \partial \mathbf{o}_{it+1}$ deserves some discussion. When positive, it means that the stimulating impact of R\&D on productivity is strengthened through the patenting. This indicates that the patenting system help firms protect their inventions. When negative, we anticipate that the effect of knowledge spillovers dominates so that firms productivity improves less by patenting. This may be due to the weak patenting system.
+
+Following CDM, I assume that patents is a random variable of which the distribution is determined by R\&D investment. This assumption greatly simplifies the analysis by only considering the R\&D investment choice. Specifically, patents outcome in next period is assumed to be a distribution depending on past R\&D. The distribution of $\mathbf{o}_{it+1}$ is given by $Pr(\mathbf{o}_{it}\leq \mathbf{o}) = G(\mathbf{o};d_{it})$.\footnote{In the reduce-form analysis, this process is usually estimated using count data models. See \cite{hall1989research,hall2010}.} This layer of uncertainty is similar to that considered in PRVF. Note the Markovian property implies that the conditional expectation of future productivity is 
+\begin{equation*}
+    \mathbf{E}(\phi_{it+1}|\phi_{it}, d_{it})=\int h(\phi_{it},d_{it},\mathbf{o})dG(\mathbf{o};d_{it})
+\end{equation*}
+Therefore R\&D investment can influence future productivity through affecting $h(\phi_{it}, d_{it},\mathbf{o})$ and the distribution of innovation output $G(\mathbf{o}; d_{it})$. This allows me to decompose the impact of R\&D into patenting and non-patenting channels.
+
+
+\paragraph{Recursive formulation}
+To consider a general setting, denote $C(d_{it}, \mathbf{X}_{it})$ as the variable costs of R\&D investment. Here $\mathbf{X}_{it}=(\mathbf{S}_{it}, \mathbf{Z}_{it})$, $\mathbf{Z}_{it}$ is the additional exogenous states that influence the costs of R\&D investment.\footnote{For example, $\mathbf{Z}_{it}$ may contain past R\&D investment decisions so the R\&D costs also include adjustment costs.} In addition, there is a fixed cost of R\&D investment, denoted as $f(\mathbf{X}_{it})$. With this fixed costs, the model can capture the innovation choice at the extensive margin. Note that we allow the exogenous state variables to affect the costs of R\&D. Omitting the subscripts, the firm's dynamic programming problem can be written in a recursive formulation:
+\begin{equation}\label{VF_full}
+    V(\phi, \mathbf{X}) =\max_{d}\left\{V^0(\phi, \mathbf{X}), V^d(\phi, \mathbf{X})\right\} 
+\end{equation}
+where the value functions for different choices of $d$ are
+\begin{align}
+    V^0(\phi)&=\Pi(\phi,\mathbf{X})+ \beta \mathbf{E}\left[ V(\phi', \mathbf{X}')|d=0\right], \\
+    V^d(\phi)&=\max_{d} \left\{ \Pi(\phi,\mathbf{X})-C(d, \mathbf{X}) - f(\mathbf{X}) + \beta \mathbf{E}\left[ V(\phi', \mathbf{X}')|d\right]\right\}, \label{VF_d}
+\end{align}
+where $\beta$ is the discounting factor. We assume that firms have perfect foresight for the exogenous state variables. This allows us to calculate the expected firm value as
+\begin{equation}\label{EV_d}
+    \mathbf{E}\left[ V(\phi', \mathbf{X}')|d\right] = \int\int V(h(\phi,d,\mathbf{o})+\epsilon,\mathbf{X}')dG(\mathbf{o};d)dF(\epsilon)
+\end{equation}
+where $F(\cdot)$ is the distribution of $\epsilon'$. 
+A stochastic equilibrium of the model is a decision rule $d(\phi, \mathbf{X})\geq0$ such that the recursive problem (\ref{VF_full}) is solved.
+\subsection{Benefits of R\&D and Patent Value}
+\paragraph{Decomposition of the returns of R\&D} 
+Following PRVF, I define the long-run benefits of R\&D investment as relative change in the expected firm value caused by R\&D investment. One novelty in this paper is that I decompose the R\&D benefits into patenting and non-patenting channels. For what follows, I use the notation of partial derivatives by assuming that both $d$ and $d$ and $\mathbf{o}$ are continuous variables and we consider the continuous region in the value function to simplify the notation. Using (\ref{EV_d}), I decompose the benefit of innovation as:
+\begin{align}  \label{LB}
+    LB(\phi,\mathbf{X})& = \frac{\partial \ln[\mathbf{E}(V(\phi',\mathbf{X}')|d)]}{\partial d} \\
+                       & = \frac{1}{\mathbf{E}[V(\phi',\mathbf{X}')|d]} \int \left\{ \int \frac{\partial V(h+\epsilon,\mathbf{X}')}{\partial d}dG(\mathbf{o};d) + \int V(h+\epsilon,\mathbf{X}')dg(\mathbf{o};d) \right \}dF(\epsilon) \nonumber
+\end{align}
+where $g(o;d_{it})$ is the density function. This provides a decomposition of firm value change into two channels. The first term on in the big bracket captures the direct impact of R\&D on future firm value, which is the non-patenting channel. R\&D investment also influences the distribution of innovation outcome, this impact is captured in the second term. Notice that in models with only R\&D investment enters the productivity evolution (like \citet{Doraszelski2013}), only the first term appears. In the model where only innovation outcome matters for productivity (such as \citet{Peters2017}), only the second term shows up. Specification (\ref{LB}) nests them as special cases. As a result, the benefits of innovation can be viewed as a composition of two parts:
+\begin{align}
+    LB_{N}(\phi,\mathbf{X})&= \frac{1}{\mathbf{E}[V(\phi',\mathbf{X}')|d]} \int\int \frac{\partial V(h+\epsilon,\mathbf{X}')}{\partial d}dG(\mathbf{o};d)dF(\epsilon), \\
+    LB_{P}(\phi, \mathbf{X})&=   \frac{1}{\mathbf{E} [V(\phi',\mathbf{X}')|d]}\int\int V(h+\epsilon,\mathbf{X}')dg(\mathbf{o};d)dF(\epsilon), \label{LB_P}
+\end{align}
+where $LB_{N}$ is the part of R\&D returns without patenting, $LB_{P}$ represents the portion of the benefits of R\&D realized through patenting. Though we use patents as an example here, this decomposition strategy can also be directly applied to models in which innovation input and output differs. The underlying assumption in my model is conditional on the observed innovation output, R\&D still plays a role in affecting the firm performance.
+\paragraph{Patent value}
+To obtain the value of patents, we need to fix the firm's R\&D investment so that the benefits of R\&D is not confounded with the value of patents in determining the firm value. We then compute the increase change in the firm value by exogenously adjusting the value of innovation output. Let $\mathbf{E}[V(\phi',\mathbf{X}')|d,\mathbf{o'}]$ be the expected firm value conditional on R\&D investment and innovation output, we obtain that
+\begin{equation}\label{EV_do}
+    \mathbf{E}[V(\phi',\mathbf{X}')|d,\mathbf{o'}] = \int V(h(\phi,d,\mathbf{o}'),\mathbf{X}')dF(\epsilon)
+\end{equation}
+Note that we remove the uncertainty in generating innovation output by conditioning on $\mathbf{o'}$. Then we differentiate the log-form of (\ref{EV_do}) with respect to $\mathbf{o}'$ and obtain an estimator for the patent value:
+\begin{align}
+    PV(\mathbf{o}', d) &=  \frac{\partial \ln [\mathbf{E}(V(\phi',\mathbf{X}'|d,\mathbf{o}')]}{\partial \mathbf{o'}} \\
+                     &=  \frac{1}{\mathbf{E} [V(\phi',\mathbf{X}')|d, \mathbf{o}']} \int\frac{\partial V(h(\phi,d,\mathbf{o}')+\epsilon,\mathbf{X}')}{\partial \mathbf{o}'}dF(\epsilon) \nonumber
+\end{align}
+Notice $PV(\mathbf{o}',d)$ has a dimension identical to $\mathbf{o}'$. Let $o_{j}$ be the $j^{th}$ element in $\mathbf{o}$. We call $o_j$ as the outcome of $j$-type innovation. Also let's denote $\mathbf{o}_{-j}$ as a vector of elements in $\mathbf{o}$ excluding $o_j$. In particular, if $\mathbf{o}\in \mathbf{R}^n$, $\mathbf{o}_{-j}=(o_1,\cdots,o_{j-1},o_{j+1},\cdots,o_n)$. In principle, there are interacting effects among different elements in $\mathbf{o}'$. That is, the value of $j$-type innovation $PV_j(\mathbf{o}',d)$ varies by $\mathbf{o}'_{-j}$. To avoid this complication, we compute the average value of each type of patent by using the distribution of $\mathbf{o}'_{-j}$ conditional on $j$-type innovation and R\&D investment $d$. Given the joint distribution $G(\mathbf{o}';d)$, the conditional distribution $G(\mathbf{o}_{-j}'|o_j',d)$ is given by
+\begin{equation*}
+    G(\mathbf{o}'_{-j}|o_j',d) =\int \frac{g(\mathbf{o}';d)}{g_j(o_j';d)}d\mathbf{o}_{-j}'
+\end{equation*} 
+where $g_j(o_j;d)=\int g(\mathbf{o}';d)d\mathbf{o}_{-j}'$ is the the marginal density function of $o_j$. Employing this probability distribution, we define the value of $j$-type innovation output as
+\begin{align}
+    EPV_j(o_j,d) = \int PV(\mathbf{o}',d)dG(\mathbf{o}'_{-j}|o_j,d).
+\end{align}
+Notice that the calculation of $EPV_j$ does not depend on the realizations of $\mathbf{o}'_{-j}$. The conditional expectation also characterizes the linkages between different types of innovation output. 
+\paragraph{Extensive margin of R\&D} R\&D data often contains measurement error, and patent data are count data. This encourages researchers to  This situation can easily be accommodated by the empirical framework in this paper. Now we consider the R\&D choice $d\in\{0,1\}$ and patent count data $o_j\in\mathbb{N}$. We only need to slightly change the notation. First, the R\&D benefits is defined only at the extensive margin:
+\begin{equation}
+    DLB(\phi,\mathbf{X}) =\ln\mathbf{E}[V(\phi',\mathbf{X}')|d=1]-\ln\mathbf{E}[V(\phi',\mathbf{X}')|d=0]
+\end{equation}
+Using a similar decomposition, the non-patenting and patenting benefits are:
+\begin{align}
+    DLB_N(\phi,\mathbf{X}) =& G(\mathbf{0};d=1)\left\{\int \ln V(h(\phi,d=1,\mathbf{0}),\mathbf{X}')dF(\epsilon)-\ln\mathbf{E}[V(\phi',\mathbf{X}')|d=0]\right\} \label{DLB_N} \\ 
+    DLB_P(\phi,\mathbf{X}) =&\int \int_{\mathbf{o}>\mathbf{0}}\left\{\ln V(h(\phi,d=1,\mathbf{0}),\mathbf{X}')-\ln\mathbf{E}[V(\phi',\mathbf{X}')|d=0]\right\}dG(\mathbf{o};d=0)dF(\epsilon) \label{DLB_P}
+\end{align}
+where $G(\mathbf{0};d=1)$ is the probability that no patent generated and $\mathbf{o}>\mathbf{0}$ means that each element in $\mathbf{o}$ is strictly positive. These two expressions are simply a discrete version of the decomposition introduced before. To consider the patent value, we can define the value of $j$-type innovation output as 
+\begin{equation} \label{patent_value}
+    DEPV_j(o_j,d) = \int PV(\mathbf{o}',d=1)dG(\mathbf{o}'_{-j}|o_j,d=1)-\int PV(\mathbf{o}',d=1)dG(\mathbf{o}'_{-j}|o_j-1,d=1)
+\end{equation}
+Note $G(\mathbf{o}'_{-j}|o_j-1,d=1)$ captures the probabilistic distribution of all types when no $j$-type patent is generated. Once again, the patent value is defined as the marginal change in the expected firm value generated by increasing the number $j$-type patent by one. 
+
+
+
+
+
+
 \section{Computation}
 I refer to \citet{farmer2017} for the discretization of non-linear Markov process. The implementation of nested fixed point algorithm is explained below.
 
