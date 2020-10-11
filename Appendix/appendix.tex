@@ -1,4 +1,40 @@
 
+%%%%%%%%%%%%%%%%%%%%%
+and: 
+\begin{align*}
+    \lim_{\delta_T\rightarrow 0^{+}} \Delta W(\delta_T)& = \int_0^{\beta \Delta_{it}+\gamma_{it}}G(c)dc - \lim_{\delta_T\rightarrow 0^{+}}\delta_T \int_0^{\beta \Delta_{it}/\delta_T}G(c_1)dc_1,
+\end{align*}
+where the second term on the right-hand side is by the change of variable that $c_1 = c/\delta_T$. Plug the expression $G(c) = 1-\exp(-c/\gamma_{it})$ into the first term  of the right-hand side, we obtain that 
+\begin{align*}
+    \int_0^{\beta \Delta_{it}+\gamma_{it}}G(c)dc 
+        &= \beta \Delta_{it} + \gamma_{it}\exp(-\frac{\beta \Delta_{it}+\gamma_{it}}{\gamma_{it}}) \\
+        & > \beta \Delta_{it}  =\delta_T \int_0^\frac{\beta \Delta_{it}}{\delta_T}dc\\
+        & \geq \delta_T\int_0^\frac{\beta \Delta_{it}}{\delta_T} G(c)dc \\
+        &= \beta \Delta_{it}+\delta_{T}\gamma_{it}(\exp \left(-\frac{\Delta_{it}}{\delta_T\gamma_{it}} \right)-1))
+\end{align*}
+Note that the right limit $\lim_{\delta_T\rightarrow 0^{+}}\beta \Delta_{it}+\delta_{T}\gamma_{it}(\exp \left(-\frac{\Delta_{it}}{\delta_T\gamma_{it}} \right)-1)) = \Delta_{it}$, hence we have 
+\begin{equation*}
+    \lim_{\delta_T\rightarrow 0^{+}} \Delta W(\delta_T)>0.
+\end{equation*} 
+
+
+We immediately know that $\Delta W_T(\delta_T)|_{\delta_T=1} = 0$. Now we consider $\delta_T$ in the closed interval $[\varepsilon, 1]$, where $0<\varepsilon<1$. Because $\Delta W_T(\delta_T)$ is a continuous function on $[\varepsilon, 1]$, $\Delta W_T(\delta_T)$ will attain extreme values on this closed interval. Consider the first-order derivative:
+    \begin{align*}
+        \Delta W(\delta_T)' &=-\gamma  G\left(\beta \Delta +(1-\delta_T)\gamma \right)+\int_0^{\beta \Delta }\frac{c}{\delta_T^2}g(c/\delta_T)dc \\
+            &= -\gamma \left[1-\exp\left(-\frac{\beta \Delta +(1-\delta_T)\gamma }{\gamma }\right)\right] \\
+            &\quad -\frac{\beta \Delta}{\delta_T} \exp\left(-\frac{\beta \Delta}{\delta_T \gamma}\right)-\gamma\left[\exp\left(-\frac{\beta \Delta}{\delta_T \gamma}\right)-1\right] \\
+            &= \gamma \left[\exp\left(-\frac{\beta \Delta +(1-\delta_T)\gamma }{\gamma }\right)-\exp\left(-\frac{\beta \Delta}{\delta_T\gamma}\right)\right]-\frac{\beta \Delta}{\delta_T}\exp \left(-\frac{\beta \Delta}{\delta_T \gamma}\right)   
+    \end{align*}
+    Note that $\lim_{\delta_T\rightarrow 0^{+}}\Delta W(\delta_T)' = \gamma \exp\left(-\frac{\beta \Delta+\gamma}{\gamma}\right)>0$. By the continuity of function $\Delta W(\delta_T)$, there always exist  a $\varepsilon \in (0,\,1)$ that is close to zero such that $\Delta W(\varepsilon)>0$. The second-order derivative of $\Delta W_T$ with respect to $\delta_T$ is:
+    \begin{align*}
+        \Delta W(\delta_T)'' = 
+    \end{align*}
+
+    $\Rightarrow  \Delta W(\delta_T)' < 0.$     
+ 
+    This implies that $\Delta W(\delta_T)$ attains its maximum value at $\varepsilon$ on the interval $\varepsilon$ and $\Delta W(\varepsilon)>0$. Because $\varepsilon$ can be arbitrarily small, we have $\Delta W(\delta_T)>0$ for any $\delta\in(0, 1)$. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{A Flexible Empirical Framework}\label{Sec2}
 In this section, I first briefly lay out a standard model of dynamic model with R\&D investment and patents. The basic structure of the model is similar to that considered in \cite{Awetal.2011,Doraszelski2013,Peters2016, Peters2017}, with the exception that both R\&D and patents play a role in shifting the future productivity. 
 

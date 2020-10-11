@@ -24,6 +24,9 @@
 \usepackage[authoryear]{natbib}
 \usepackage{appendix}
 
+
+
+
 \doublespacing
 \usepackage[unicode=true,
  bookmarks=false,
@@ -59,8 +62,10 @@
 
 \normalem
 
-
-\newtheorem{hyp}{Hypothesis}\newtheorem{subhyp}{Hypothesis}[hyp]
+\newtheorem{prop}{Proposition}
+\newtheorem*{lemma}{Lemma}
+\newtheorem{hyp}{Hypothesis}
+\newtheorem{subhyp}{Hypothesis}[hyp]
 \renewcommand{\thesubhyp}{\thehyp\alph{subhyp}}
 
 \newcommand{\red}[1]{{\color{red} #1}}
@@ -148,22 +153,26 @@ formulation assumes that (1) a firm’s productivity is persistent over time, im
 and utility model patents in affecting the firm’s future productivity, we allow that $\partial h/\partial n_{it+1}$ and $\partial h/\partial b_{it+1}$ to be different. It is worth noting that the formulation of productivity process is different from that considered in PRVF. In the specification of PRVF, only the innovation outcomes enter into the productivity evolution process. In other words, R\&D investment can only affect the productivity evolution through the measured innovation outcome. In our setting, it is clear that R\&D is the fundamental source of productivity growth, but the magnitude of its impact is determined by the innovation outcome. Therefore, R\&D investment has both direct and indirect effect on the productivity. PRVF end up estimate two primitives via a two-step procedure: (1) $\Pr(innovation| R\&D)$, and (2) $\Pr(productivity|innovation)$. 
 
 \textit{R\&D costs and equilibrium.} Following PRVF, the innovation cost is assumed to be dependent on prior R\&D experience and current capital stock. For firm $i$ in year $t$, its innovation cost $C_{it}$ is given as:
-\begin{equation}
+\begin{equation} \label{rd_costs}
     C_{it}\sim \exp(\kappa_m\times rd_{it-1}\times k_{it}+\kappa_{s}\times(1-rd_{it-1})\times k_{it}),
 \end{equation}
-where $\exp(\cdot)$ represents the exponential distribution. Hence the cost of investing in R\&D follows an exponential distribution with a mean of $\kappa_mk_{it}$ when $rd_{it-1}=1$, and with a mean of $\kappa_sk_{it}$ when $rd_{it-1}=0$. $\kappa_m$ and $\kappa_s$ can be different, implying that the distribution of
-maintenance costs differs from start-up costs. $\kappa_sk_{it}$ captures the start-up costs when a firm did not participate in R\&D activities in the previous period but plan to undertake R\&D investment in the current period. In contrast, $\kappa_mk_{it}$ reflects the maintenance costs when a firm was active in R\&D investment in the previous period and continue to invest in R\&D.  $k_{it}$ enters the distribution of R\&D costs because of the scale effect that a firm with larger capital stock are required to hire more researchers and build larger research labs. Throughout the estimation, we treat $k_{it}$ to be exogenous. The state variables are $s_{it} = (\phi_{it} ,rd_{it-1})$. The firm’s decision on R\&D will affect the evolution of $s_{it}$. The firm’s value function $V(s_{it})$ can be calculated as:
-\begin{align}
+where $\exp(\cdot)$ represents the exponential distribution. Hence the cost of investing in R\&D follows an exponential distribution with a mean of $\kappa_mk_{it}$ when $rd_{it-1}=1$, and with a mean of $\kappa_sk_{it}$ when $rd_{it-1}=0$. The innovation cost is observed by the firm, but not to us as the econometricians.Therefore the innovation cost is an additional factor that affects the firm's behavior of investing in R\&D. $\kappa_m$ and $\kappa_s$ can be different, implying that the distribution of
+maintenance costs differs from start-up costs. $\kappa_sk_{it}$ captures the start-up costs when a firm did not participate in R\&D activities in the previous period but plan to undertake R\&D investment in the current period. In contrast, $\kappa_mk_{it}$ reflects the maintenance costs when a firm was active in R\&D investment in the previous period and continue to invest in R\&D.  $k_{it}$ enters the distribution of R\&D costs because of the scale effect that a firm with larger capital stock are required to hire more researchers and build larger research labs. Throughout the estimation, we treat $k_{it}$ to be exogenous. The state variables are $s_{it} = (\phi_{it} ,rd_{it-1})$. The firm’s decision on R\&D will affect the evolution of $s_{it}$. The firm’s expected value function $V(s_{it})$ can be expressed as:\footnote{Note that the firm's value function is
+\begin{equation*}
+    \tilde{V}(s_{it})=\max_{rd_{it}}\left\{\pi(\phi_{it})-rd_{it}C_{it}+\mathbf{E}\tilde{V}(s_{it+1}|s_{it},rd_{it})\right\}
+\end{equation*}
+The integrated Bellman equation (\ref{int_bellman}) is obtained by taking the expectation of the value function above with respect to $C_{it}$.}
+\begin{align} \label{int_bellman}
     V(s_{it}) &= \pi(\phi_{it}) + \\
-              &\beta \int _0^{\infty}\max_{rd_{it}}\left\{\mathbf{E} V(s_{it+1}|\phi_{it},rd_{it}=1)-C_{it}, \mathbf{E}V(s_{it+1}|\phi_{it}, rd_{it}=0)\right\}dG(C_{it}) \nonumber
+              &\int _0^{\infty}\max_{rd_{it}}\left\{\beta \mathbf{E} V(s_{it+1}|\phi_{it},rd_{it}=1)-C_{it}, \beta \mathbf{E}V(s_{it+1}|\phi_{it}, rd_{it}=0)\right\}dG(C_{it}), \nonumber
 \end{align}
 where $\beta$ is the discount factor. We define $\gamma_{it}$ as the parameter for the exponential distribution:
 \[
 \gamma_{it}\equiv \kappa_m\times rd_{it-1}\times k_{it}+\kappa_{s}\times(1-rd_{it-1})\times k_{it},    
 \]
-then $G(C_{it})=1-\exp(-C_{it}/\gamma_{it})$ for $c\geq0$ and zero otherwise. The expected future value of the firm is an expectation over the future productivity levels and the count of patent applications:
+then $G(C_{it})=1-\exp(-C_{it}/\gamma_{it})$ for $C_{it}\geq0$ and zero otherwise. The expected future value of the firm is an expectation over the future productivity levels and the count of patent applications:
 \begin{equation}\label{vf}
-    \mathbf{E}V(s_{it+1}|s_{it}) = \sum_{n_{it+1}}\sum_{b_{it+1}}\int_\phi' V(s_{it+1})dF(\phi'|\phi_{it}, n_{it+1}, b_{it+1}, rd_{it}) P(n_{it+1}, b_{it+1}|rd_{it})
+    \mathbf{E}V(s_{it+1}|s_{it}) = \sum_{n_{it+1}}\sum_{b_{it+1}}\int_{\phi'} V(s_{it+1})dF(\phi'|\phi_{it}, n_{it+1}, b_{it+1}, rd_{it}) P(n_{it+1}, b_{it+1}|rd_{it})
 \end{equation}
 
 Note that (\ref{vf}) is composed of two parts representing two kinds of uncertainties facing innovation. The first uncertainty comes from the creating of applicable patents (or creating new ideas); the second uncertainty comes from the response of future productivity to the future patenting activities and R\&D decision in the previous year. The firm maximized its firm value, which implies that a firm will choose to invest in R\&D if and only if
@@ -305,7 +314,7 @@ considering the costs and benefits of innovation because R\&D activities with pa
 \subsection{Quality of R\&D data}
 \cite{mairesse2005} provide evidence on the substantial measurement error of using R\&D expenditures to predict the innovation probability for the firm-level data from the French innovation survey. More related, \cite{chen2017wp} document that corporate income tax reductions induce Chinese firms to relabel administrative expenses as expenditures on R\&D. These results suggest that the levels of R\&D may not accurately reflect the firm's actual investment in innovation. In appendix \ref{app_data_features}, we also show that the extensive margin of R\&D and patents captures most of the innovation effects. Therefore we prefer using information on the R\&D choice at the extensive margin as PRVF did. The estimation methodology does not require the researchers to have information on the intensive margin of R\&D investment. Instead, it assumes that the econometrician is ignorant about the true R\&D costs paid each firm, therefore to some extent it is robust to measurement errors in R\&D data at the intensive margin. As long as the extensive-margin status of R\&D is measured correctly, the PRVF method still holds when the distribution of R\&D costs is well assumed. 
 
-In the model, a firm's current state includes its R\&D choice in the previous period.  Firm $i$ is undertaking start-up R\&D if $(rd_{it-1}, rd_{it})=(0, 1)$, and is participating maintenance R\&D if $(rd_{it-1}, rd_{it})=(1, 1)$. The start-up R\&D is not literally the innovation expenses for a new project as we do not have information on the operation of research projects by each firm. In this sense, our definition of different types of R\&D is loose and only reflects the continuity of R\&D investment in a two-period fashion. To prepare the data for estimation, we require that a firm exists at least for two consecutive years to identify the firm's R\&D status in the past and current periods. In Figure \ref{fig:rd_transition}, we show the probabilities for start-up and maintenance R\&D. A universal pattern is that most firms (around 80\%) tend to continue their R\&D investment, but many less firms (around 10\%) perform start-up R\&D. This implies that firms face a large adjustment cost for R\&D investment, which is consistent with the R\&D literature documenting that firms tend to smooth R\&D spending over time because of the long time between conception and commercialization \citep{hall1986patents,lach1989dynamics, hall2010handbook}.
+In the model, a firm's current state includes its R\&D choice in the previous period.  Firm $i$ is undertaking start-up R\&D if $(rd_{it-1}, rd_{it})=(0, 1)$, and is participating maintenance R\&D if $(rd_{it-1}, rd_{it})=(1, 1)$. The start-up R\&D is not literally the innovation expenses for a new project as we do not have information on the operation of research projects by each firm. In this sense, our definition of different types of R\&D is loose and only reflects the continuity of R\&D investment in a two-period fashion. To prepare the data for estimation, we require that a firm exists at least for two consecutive years to identify the firm's R\&D status in the past and current periods. In Figure \ref{fig:rd_transition}, we show the probabilities for start-up and maintenance R\&D. A universal pattern is that most firms (around 80\%) tend to continue their R\&D investment, but many less firms (around 10\%) perform start-up R\&D. This implies that firms face a large adjustment cost for R\&D investment, which is consistent with the R\&D literature documenting that firms tend to smooth R\&D spending over time because of the long time between conception and commercialization \citep{hall1986patents,lach1989dynamics, hall2010handbook}. We also notice that according to our definition of R\&D starters and continuers, the R\&D starters are larger than R\&D continuers in terms of capital stock, total number of employees. In addition, the R\&D starters are on average two years younger than the R\&D continuers.\footnote{See the data appendix for relevant statistics.} 
 
 \begin{figure}[h]
     \centering
@@ -586,63 +595,97 @@ The patent value measured by our model captures the proportional changes in the 
 
 
 \section{Counterfactual Analysis}
-With the help of estimated model, we can analyze impact of certain policies targeting at improving the firm's investment in innovation. In this section, we analyze the impact of two different R\&D subsidy policies that are currently implemented in China. The first is reducing R\&D costs by lowering the firm's borrowing interest rate. We view this as a cost reduction proportional to R\&D costs. The second policy is a lump-sum transfer to firms planning to undertake R\&D investment. For each type of the subsidy policy, there are two variations: (1) subsidies on the start-up costs; (2) subsidies on the maintenance costs. THerefore we consider four subsidy programs in total. 
+In this section, we analyze the impact of two different R\&D subsidy policies that are currently implemented in China. The first is reducing R\&D costs by lowering the firm's borrowing interest rate. We view this as a cost reduction proportional to R\&D costs. The second policy is a lump-sum transfer to firms planning to undertake R\&D investment. 
 
-The subsidy on different types of R\&D costs can potentially affect the innovation probability and firm value in different ways. Which type of innovating firms should we subsidize? We answer this question by compare between the total effect of reducing maintenance costs and that of reducing start-up costs for proportional subsidy and lump-sum subsidy, respectively. We then go further to examine the efficiency of two different subsidy policies (proportional subsidy and lump-sum subsidy) on different types R\&D costs by evaluating the policy impact of one unit subsidy.  
-
-In what follows, we first explain the setup for the counterfactual experiment, then we display the empirical results. 
+The subsidy on different types of R\&D costs can potentially affect the innovation probability and firm value in different ways. Which type of innovating firms should we subsidize? We answer this question by compare between the total effect of reducing maintenance costs and that of reducing start-up costs for proportional subsidy and lump-sum subsidy, respectively. For each type of the subsidy policy, there are two variations: (1) subsidizing the start-up costs; (2) subsidies on the maintenance costs. In the end, we consider four subsidy programs in total. We go further to examine the efficiency of these subsidy policies (proportional subsidy, lump-sum subsidy, and their variations) on different types R\&D costs by evaluating the policy impact of one unit subsidy.  
 
 \subsection{Setup for counterfactuals} 
 
-\subsubsection{Total effects of R\&D subsidies}
-\textit{Proportional subsidy.} Let $1-\delta_s$ and $1-\delta_m$ be the subsidy rate for start-up costs and maintenance costs, separately. In period $t$, upon receiving a proportional subsidy, the mean R\&D cost of firm $i$ becomes:
-\begin{align*}
-     \gamma_{it}(s)&=\kappa_mrd_{it-1}k_{it}+\delta_s\kappa_s(1- rd_{it-1}) k_{it} &\text{for R\&D starters}   \\
-     \gamma_{it}(m)&=\delta_m\kappa_m rd_{it-1} k_{it}+ \kappa_s(1-rd_{it-1}) k_{it}&\text{for R\&D continuers}
-\end{align*}
-For expositional purpose, let $\tau\in\{s,m\}$ denote the type of R\&D costs being subsidized by the proportional subsidy. To make these two subsidy programs (start-up costs subsidy versus maintenance costs subsidy) comparable, we require that $(1-\delta_s)\kappa_sk_{it}=(1-\delta_m)\kappa_mk_{it}$, or equivalently, 
+\subsubsection{Definition of different R\&D subsidies}
+\textit{Proportional subsidy.} We first consider a scenario in which the government can perfectly evaluate the innovation projects to know each firm's innovation cost $C_{it}$. Let $(1-\delta_s)$ and $(1-\delta_m)$ be the subsidy rate for start-up costs and maintenance costs, separately. Under the scheme of proportional subsidy, the amount for subsidy received by each firm is simply $\tau_{it}^{T} = (1-\delta_T)C_{it}$, where $T\in\{s,m\}$ denote the type of firms subsidized by the proportional subsidy; $T=s$ represents that the subsidy is targeted at the R\&D starters and $T=m$ for R\&D continuers.  In period $t$, upon receiving a proportional subsidy, firm $i$'s R\&D costs become $C(\tau_{it}^T) = C_{it}-\tau_{it}=\delta_T C_{it}$. Then the expected expenditure on proportional subsidies conditional on the firm's capital stock $k_{it}$ is 
 \begin{equation}
-\delta_s\equiv 1-\frac{(1-\delta_m)\kappa_m}{\kappa_s}.
+    \mathbf{E}(\tau_{it}^T|k_{it}) = (1-\delta_T)\mathbf{E}(C_{it}|k_{it})=(1-\delta_T)\gamma_{it},
 \end{equation}
-This means that conditional on the capital stock, firms expect to receive a same amount of subsidy regardless of being an R\&D starter or continuer. Controlling for the expected amount of subsidy allows us to compare the effectiveness of start-up costs subsidy and maintenance costs subsidy under the proportional subsidy policy. 
-
-Consider a one-period reduction in the R\&D costs caused by the proportional subsidy, the firm value can be calculated as:
+where $ \gamma_{it}= \delta_s\kappa_sk_{it}$ for R\&D starters and $\gamma_{it}=\delta_m\kappa_m k_{it}$ for R\&D continuers. We consider the impact of one-period subsidy. After introducing the proportional subsidy, we can express the expected firm value as:
 \begin{equation}\label{wz}  
-W_{\tau}(\phi_{it}, rd_{it-1})=\pi(\phi_{it})+ \int_0^{\infty}\max_{rd_t\in\{0,1\}}\left\{\beta \mathbf{E}V_{0},  \beta \mathbf{E}V_{1}-c\right\}dG_\tau(c)
+W_{Tit}^{prop}=\pi(\phi_{it})+ \int_0^{\infty}\max_{rd_t\in\{0,1\}}\left\{\beta \mathbf{E}V_{0},  \beta \mathbf{E}V_{1}-\delta_T C_{it}\right\}dG(C_{it})
 \end{equation}
-where $G_\tau(c)=1-\exp(\frac{c}{\gamma _t(\tau)})$ is the cumulative density function for the exponential distribution with a mean of $\gamma_{it}(\tau)$. Based on the estimates of $\mathbf{E}V_{0}$ and  $\mathbf{E}V_1$ from the previous computation, we can calculate $W_{\tau}(\phi_{it}, rd_{it-1})$. Then the long-run effect of one-period proportional subsidy is:
+where $G(c)$ is the cumulative density function for the firm's innovation cost $C_{it}$. Based on the estimates of $\mathbf{E}V_{0}$ and  $\mathbf{E}V_1$ from our previous analysis, we can calculate $W_{Tit}^{prop}$. Then the long-run effect of one-period proportional subsidy is defined as the increase in the firm value:
 \begin{equation}
-    LB_{\tau}(\phi_{it}, rd_{it-1})=W_\tau(\phi_{it}, rd_{it-1})-V(\phi_{it}, rd_{it-1})
+    LB_{Tit}^{prop}=W_{Tit}^{prop}-V(\phi_{it}, rd_{it-1})
 \end{equation}
-\textit{Lump-sum subsidy.} Now we turn to consider the impact of the lump-sum transfer, let $F_t$ denote the lump-sum transfer from the government if a firm undertakes R\&D investment. To compare it with the proportional subsidy, we impose that 
-\[
-  F_{it} = (1-\delta_m)k_{it} = (1-\delta_s)k_{it}
-\]
-Hence the lump-sum transfer received by the firm is 
-Then the firms value function becomes:
+\textit{Lump-sum subsidy.} In reality, the government can hardly observe each firm's innovation costs. Considering this, we consider the case when the government only knows the distribution of R\&D costs, as the econometrician does. Since the government does not know the realization of $C_{it}$, we assume that the innovation subsidy is implemented by targeting the observable--the expected R\&D costs, $\mathbf{E}(C_{it})=\gamma_{it}$. In particular, the innovation subsidy is a lump-sum transfer to the firm with amount of $F_{it}^{T}$ for type-$T$ firms. We impose that $F_{it}^{T} = \mathbf{E}(\tau_{it}^T|k_{it})$ so that the expected value of lump-sum transfer received by the firm is equal to the expected proportional subsidies.\footnote{This is because $\mathbf{E}(F_{it})=\mathbf{E}(\mathbf{E}(\tau_{it}^T|k_{it}))=\mathbf{E}(\tau_{it}^{T})$ by the law of iterated expectations.} Under one-period lump-sum subsidy, the firm's expected value function becomes:
 \begin{equation}\label{wzf}
-W_{\tau}^F(\phi_{it}, rd_{it-1})=\pi(\phi_{it})+ \int_0^{\infty}\max_{rd_{it}\in\{0,1\}}\left\{\beta \mathbf{E}V_{0},  \beta \mathbf{E}V_{1}+F_{it}-c\right\}dG(c)
+    W_{Tit}^{lump}=\pi(\phi_{it})+ \int_0^{\infty}\max_{rd_{it}\in\{0,1\}}\left\{\beta \mathbf{E}V_{0},  \beta \mathbf{E}V_{1}+(1-\delta_T)\gamma_{it}-C_{it}\right\}dG(C_{it})
 \end{equation}
-where $\tau \in \{s, m\}$ representing whether the firm is an R\&D starter or an R\&D continuer. Similar to the proportional subsidy, the long-run effect of one-period lump-sum transfer on firm value is estimated as:
+Similar to the proportional subsidy analyzed just now, the long-run effect of one-period lump-sum transfer on firm value is estimated as:
 \begin{align}\label{longsub1}
-LB_{\tau}^F(\phi_{it}, rd_{it-1})=& W_\tau^F(\phi_{it}, rd_{it-1})-V(\phi_{it}, rd_{it-1})
+LB_{Tit}^{lump}=& W_{Tit}^{lump}-V(\phi_{it}, rd_{it-1})
 \end{align}
-
-Similarly, we can calculate the average probability of innovation after receiving subsidy as $P_\tau()$ and $P^F_\tau$ and compute the innovation-enhancing effect of different subsidy programs. We experiment with $\delta_m=$  0.90, 0.85, and 0.80. 
-
-
-\subsubsection{Effects of one unit R\&D subsidy} 
-We have explained the setup of the counterfactual analysis of the total effects of proportional subsidy and lump-sum subsidy. In order to compare different subsidy policies, we restrict that the expected subsidy by each firm is the same for different programs. However, the ``actual'' total subsidy can still be different because firms have different incentives to innovate when facing different R\&D subsidy programs.  When aggregated, the total actual expenditures become different for different subsidy programs. As the consequence, the varying effects of subsidy on firm value and innovation probability may simply be driven by the realized amount of subsidy rather than the type of subsidy. 
-
-To evaluate the efficiency of different subsidy policies, we now examine the change in firm value caused by one-unit subsidy. In particular, for different subsidy policies, the change in firm value caused by one unit subsidy is given as below:
+Similarly, we can calculate the average probability of innovation after receiving subsidy as $P_{Tit}^{prop}$ and $P_{Tit}^{lump}$ and compute the innovation-enhancing effect of different subsidy programs: 
 \begin{align}
-\text{proportional: } \chi_\tau=&\frac{1}{NT}\sum_i \sum_t \underbrace{G_\tau\left\{\mathbf{E}V_1(\phi_{it}, rd_{it-1})-\mathbf{E}V_0(\phi_{it}, rd_{it-1})\right\}}_\text{innovation prob.} \underbrace{\frac{LB_{\tau}(\phi_{it}, rd_{it-1})}{(1-\delta_m)\kappa_m k_{it}}}_\text{effect per unit subsidy}\label{xz} \\ 
-\text{lump-sum: }\chi_{\tau}^F=&\frac{1}{NT}\sum_i\sum_t \underbrace{G_\tau\left\{\mathbf{E}V_1(\phi_{it}, rd_{it-1})-\mathbf{E}V_0(\phi_{it}, rd_{it-1})+F_{it}\right\}}_\text{innovation prob.}\underbrace{\frac{LB_{\tau}^F(\phi_{it}, rd_{it-1})}{(1-\delta_m)\kappa_m k_{it}}}_\text{effect per unit subsidy} \label{xz_f}
+    P_{Tit}^{prop} & = \int_0^{\beta \Delta EV_{it}}dG(c/\delta_T)=1-\exp \left(-\frac{\beta \Delta EV_{it}}{\delta_T \gamma_{it}}\right)  \\
+    P_{Tit}^{lump} & =\int_0^{\beta \Delta EV_{it}+(1-\delta_T)\gamma_{it}}dG(c) = 1-\exp \left(-\frac{\beta \Delta EV_{it}+(1-\delta_T)\gamma_{it}} {\gamma_{it}}\right)
 \end{align}
-Equations (\ref{xz}) and (\ref{xz_f}) deserve some explanation. There are two components: the first is innovation probability and the second is the policy effect per unit subsidy measured by the change in firm value. We need to consider the innovation probability to back out the actual subsidy received by firms, because only firms that are active in R\&D investment are able to receive the R\&D subsidy. $\chi_\tau$ and $\chi_\tau^F$ measure the change in firm value caused by one unit proportional subsidy or lump-sum subsidy, respectively. The relative magnitude of $\chi_\tau$ to $\chi_\tau^F$ implies the relative efficiency of proportional subsidy to lump-sum subsidy. More specifically, $\chi_\tau>\chi_\tau^F$ ($<\chi_\tau^F)$ implies that proportional subsidy is more (less) efficient than lump-sum subsidy in increasing the firm value for the $\tau$-type R\&D costs. Similarly, we can define the change in the innovation probability of all firms caused by one unit subsidy.
+\textit{Start-costs subsidy and maintenance-costs subsidy.} For both of the proportional subsidy and lump-sum subsidy, the government need to subsidize two types of firms: the R\&D starters ($T_{it}=s$) and continuers ($T_{it}=m$). Because these two types of firms have different distributions of innovation costs, the expected government expenditures on subsidizing them can still vary even if $\delta_s = \delta_m$. To be able to compare their effectiveness, we require that their expected expenditures are the same. For R\&D continuers and starters, the expected subsidies they receive are:
+\begin{align*}
+    \mathbf{E}(\tau_{it}^s) & = (1-\delta_s)\kappa_s\mathbf{E}(k_{it}|T_{it}=s) \,\, \text{(R\&D starters)}; \\
+    \mathbf{E}(\tau_{it}^m)& = (1-\delta_m)\kappa_m\mathbf{E}(k_{it}|T_{it}=m) \,\, \text{(R\&D continuers)}.
+\end{align*}
+Equalizing $E(\tau_{it}^s)$ and $E(\tau_{it}^m)$ leads to 
+
+\begin{equation}\label{delta_condition}
+\delta_s= 1-(1-\delta_m)\frac{\kappa_m \mathbf{E}(k_{it}|T_{it}=m)}{\kappa_s \mathbf{E}(k_{it}|T_{it}=s)}.
+\end{equation}
+For each year, we can estimate $\mathbf{E}(k_{it}|T_{it}=m)$ and $\mathbf{E}(k_{it}|T_{it}=s)$ as the sample average of the firm's capital stocks for R\&D continuers and starters, separately. Therefore we can use Equation(\ref{delta_condition}) to determine $\delta_s$ given any chosen $\delta_m$. This enables us rule out that the different impacts generated by the subsidies are merely because that R\&D starters and R\&D continuers receive different level of financial supports from the government. 
+
+\begin{table}[h!]
+    \centering
+    \caption{Amount of subsidies for different policies}
+    \label{Tab_SubSum}
+    \begin{tabular}{lcc}
+    \toprule 
+        Subsidy types & Proportional subsidy & Lump-sum subsidy \\ 
+    \midrule 
+        R\&D starters & $(1-\delta_s) C_{it}$ & $C_{it}-(1-\delta_s)\gamma_{it}$  \\ 
+        R\&D continuers & $(1-\delta_m)C_{it}$ & $C_{it}-(1-\delta_m)\gamma_{it}$\\
+    \bottomrule 
+    \end{tabular}
+\end{table}
+
+We summarize the four different regimes of subsidies in Table \ref{Tab_SubSum}. In total, we consider two types of subsidy policies (proportional subsidy and lump-sum subsidy). For each type of subsidy, we consider their effects for two types of firms (R\&D continuers and R\&D starters), separately. With the parameter restriction in Equation \ref{delta_condition}), the expectation of all four different types of subsidies are equal to $(1-\delta_m)\gamma_{it}$. 
+
+\textit{Theoretical analysis of different R\&D subsidy programs.}
+Based on the model's setting, we can characterize the effects of the introduced subsidy programs. We concentrate on the two measurements of the outcomes of the innovation subsidy: the expected firm value and the innovation probability. Specifically, we first compare the outcomes of proportional subsidy with that of the lump-sum subsidy by fixing the firm type $T\in\{s, m\}$, then we consider the outcomes across different types of firms for proportional subsidy and lump-sum subsidy, separately. 
+
+\begin{prop} \label{prop1}
+    If the R\&D costs follow an exponential distribution, for $T\in \{s, m\}$:
+    \begin{enumerate}
+        \item $LB_{it}^{lump}>LB_{Tit}^{prop}$ for any $\delta_T\in (0, 1)$;
+        \item Each firm has a cut-off value $\bar{\delta}_{Tit} \equiv \beta \Delta EV_{it}/\gamma_{it}$ such that $P_{Tit}^{lump}<P_{Tit}^{prop}$ if  $\delta_T<\bar{\delta}_{Tit} $ and $P_{Tit}^{lump}>P_{Tit}^{prop}$ whenever $\delta_T>\bar{\delta}_{Tit}$.
+    \end{enumerate}
+\end{prop} 
+\begin{proof}
+    See the appendix. 
+\end{proof}
+Proposition \ref{prop1} shows that conditional on the expected amount of subsidy, lump-sum subsidy always increases the firm value more than the proportional subsidy when the the R\&D costs follow an exponential distribution.\footnote{We consider the case of a more generalized distribution and its implication for counterfactual analysis in Subsection \ref{RD_GenDist} }. The following proposition states that the effect of enhancing innovation probability depends on the magnitude of the subsidy. 
+
+Note that $\beta \Delta EV_{it}/\gamma_{it}$ measures the expected net benefits of innovation, and is positively related to the firm's innovation probability in the absence of innovation subsidies (see Equation (\ref{p_d})). According to result 2 of Proposition \ref{prop1}, the lump-sum subsidy stimulates the innovation more than the lump-sum subsidies when the firm's intrinsic innovation probability is relatively low. This implies that the lump-sum subsidy is more effective than the proportional subsidy for the group of firms which are unlikely to participate innovation prior to receiving any subsidies. 
+
+\subsubsection{Ex-post policy effects per unit R\&D subsidy} 
+In analyzing the policy effects of proportional subsidy and lump-sum subsidy, we equalize the expected payments of the government for different subsidy programs. However, the ``actual'' total subsidy can still be different because firms have different incentives to innovate when facing different R\&D subsidy programs. As the consequence, the distinct effects of different subsidies on the expected firm value and innovation probability may simply be driven by the differences in their ex-post amount. 
+
+To evaluate the one-unit efficiency of different subsidy policies, we now normalize the change in firm value using the ex-post amount of R\&D subsidy. In particular, for different subsidy policies, the change in firm value caused by one unit subsidy is defined as:
+\begin{align}
+    \chi_T^{prop}
+        =&\frac{\sum_{i}\sum_{t}P_{Tit}^{prop}LB_{Tit}^{prop}}{\sum_{i}\sum_{t}P_{Tit}^{prop}(1-\delta_m \gamma_{it})}\label{xz} \\ 
+    \chi_{T}^{lump}
+        =&\frac{\sum_{i}\sum_{t}P_{Tit}^{lump}LB_{Tit}^{lump}}{\sum_{i}\sum_{t}P_{Tit}^{lump}(1-\delta_m \gamma_{it})} \label{xz_f}
+\end{align}
+Equations (\ref{xz}) and (\ref{xz_f}) deserve some explanation. There are two components: the first is innovation probability and the second is the policy effect per unit subsidy measured by the change in firm value. We need to consider the innovation probability to back out the actual subsidy received by firms, because only firms that are active in R\&D investment are able to receive the R\&D subsidy. $\chi_\tau$ and $\chi_\tau^F$ measure the change in firm value caused by one unit proportional subsidy or lump-sum subsidy, respectively. The relative magnitude of $\chi_\tau$ to $\chi_\tau^F$ implies the relative efficiency of proportional subsidy to lump-sum subsidy. More specifically, $\chi_\tau>\chi_\tau^F$ ($<\chi_\tau^F$ ) implies that proportional subsidy is more (less) efficient than lump-sum subsidy in increasing the firm value for the $\tau$-type R\&D costs. Similarly, we can define the change in the innovation probability of all firms caused by one unit subsidy.
 
 \subsection{Results} 
-We conduct three groups of experiments by choosing $\delta_{m}=$ 90\%, 85\%, and 80\%. All of these experiments display similar results on the relative effectiveness of the R\&D subsidy policy. For the sake of brevity, we report the results of the experiment in which $\delta_{m}=80\%$.\footnote{All the results for other experiments are relegated to appendix \ref{appc3}.} 
+We conduct three groups of experiments by choosing $\delta_{m}=$ 90\%, 85\%, and 80\%. All of these experiments display similar results on the relative effectiveness of the R\&D subsidy policy. For the sake of brevity, we report the results of the experiment in which $\delta_{m}=80\%$.\footnote{All the results for other experiments are relegated to appendix \ref{app_counter}.} 
 
 \textit{Increase in firm value and innovation probability.} We first show the results of change in firm value caused by subsidizing start-up and/or maintenance R\&D costs. In Panel A of Figure \ref{F6}, the blue bar represents the average effect of proportional subsidy while the yellow bar the average effect of lump-sum subsidy. In all the graphs, '1' and '2' represent the subsidy on the maintenance costs and start-up costs, separately. There are several interesting findings from this experiment. First, lump-sum subsidy is much more effective than proportional subsidy in enhancing the firm value for all the Chinese high-tech industries. Second, the effectiveness of subsidy policy differs in different industries. Third, reductions in the maintenance costs increase the firm value more than the start-up costs. This implies that financing the maintenance costs of innovation is more effective than financing the start-up costs in increasing the firm value. 
 
@@ -682,8 +725,40 @@ Furthermore, we display the results on the impact of R\&D subsidy on innovation 
     \caption*{\small{}Note: in all the graphs, `1' represents subsidy on the maintenance costs, `2' represents subsidy on the start-up costs. Firm value is measured in 10,000 US dollars.}{\small \par}
 \end{figure}
 
-\section{Discussion}
+\section{Discussion and Extensions}
+\subsection{Distribution of R\&D costs} \label{RD_GenDist}
+In our previous analysis, idiosyncratic R\&D costs are assumed to be unobserved by the econometrician and follow an exponential distribution. The exponential distribution has brought us analytical forms in calculating the expected value function, which further reduces the computational burden. Our theoretical characterization also hinges on this distributional assumption. Though this assumption is well accepted in the structural analysis of R\&D investment (see \cite{Awetal.2011,Peters2017rand}, among others), one may argue that the results, especially the counterfactual analysis, can be sensitive to the chosen parametric form for the distribution of R\&D costs. To relieve this concern, we now relax this assumption and consider $G(c)$ being a general cumulative distribution function. 
 
+\begin{prop} \label{prop2}
+    If $G(c;\gamma_{it})$ is continuous and twice differentiable with respect to $c$, with $g(c;\gamma_{it})=\partial G(c;\gamma_{it})/\partial \gamma_{it}$ being the probability density function and  $\bar{C}_{it}$ being the expected value. The proportional and lump-sum subsidy are $(1-\delta_T)C_{it}$ and  $(1-\delta_T)\bar{C}_{it}$, respectively. Then for $T\in\{s, m\}$ and $\delta_T\in\{0, 1\}$:
+    \begin{enumerate}
+        \item There always exists a cut-off value $\bar{\delta}_{Tit} \equiv \beta \Delta EV_{it}/\gamma_{it}$ for each firm such that $P_{Tit}^{lump}<P_{Tit}^{prop}$ if  $\delta_T<\bar{\delta}_{Tit} $, and $P_{Tit}^{lump}>P_{Tit}^{prop}$ whenever $\delta_T>\bar{\delta}_{Tit}$;
+        \item For $\delta_T>\bar{\delta}_{Tit}$, $LB_{Tit}^{lump}$ is greater than $LB_{Tit}^{prop}$; for $\delta_T<\bar{\delta}_{Tit}$,  a sufficient condition for $LB_{Tit}^{lump}>LB_{Tit}^{prop}$ is: (1) $\partial g(c; \gamma_{it})/\partial c<0$ and (2) $\lim_{x\rightarrow \infty}c^3g(c)=0$.
+    \end{enumerate}
+\end{prop}
+
+\begin{proof}
+    See Appendix \ref{subsidy_proofs}.
+\end{proof}
+As an extension of our quantitative exercise, we also let the R\&D costs follow a Weibull distribution with a shape parameter $\theta$ and scale parameter $\gamma_{it}$. In this case, the cumulative density function of $C_{it}$ is given by 
+\begin{equation} \label{cdf_weibull}
+    G(c) = 1-e^{-\left(\frac{c}{\gamma_{it}}\right)^\theta}.
+\end{equation}
+Here $\theta$ is common to all firms and is related to the variance of the R\&D costs. ote that when $\theta=1$, the Weibull distribution degenerates into the exponential distribution. The density function is $g(c) = \frac{\theta c^{\theta-1}}{\gamma_{it}^\theta}e^{-\left(\frac{c}{\gamma_{it}}\right)^\theta}$. When $\theta \leq 1$, the shape of the density is convex function and is an decreasing function of $c$, which is similar to the exponential distribution. If $\theta >1$, this density function has a bell shape.\footnote{Another potential generalization of the Exponential distribution is the Gamma distribution of which the probability density function is $g(c)=\frac{x^{\theta-1}e^{-\frac{c}{\gamma_{it}}}}{\theta ^\alpha \Gamma(\alpha)}$ for $c>0$ and zero otherwise, with $\theta$ being the shape parameter and $\gamma_{it}$ characterizes the mean. Readers who are interested in this extension are referred to Appendix \ref{gen_rdDist}.} The bell-shaped density function mimics the shape of many distributions that widely used in economics and statistics such as the Log-normal distribution. 
+
+We observe that the result of innovation probability increase in Proposition \ref{prop1} is still valid as long as $\theta>0$. But the conclusion that $W_{Tit}^{lump}$ dominates $W_{Tit}^{prop}$ is no longer true when $\theta>1$. Formally, we have the following proposition which is part of a generalization of the Proposition \ref{prop1}:
+
+
+
+
+\subsection{Firm ownership}
+One concern about using Chinese data is the preferential subsidy towards State-Owned Enterprises (SOEs). The co-existence of SOEs and non-SOEs means that firms may have different R\&D costs simply because of their ownership differences. If this is the case, we should consider the effects of firm ownership on R\&D costs in the specification of R\&D costs. Recall that in our benchmark model, we relate the mean value of R\&D costs to the firm size (measured by capital stock) in equation (\ref{rd_costs}). But we can easily incorporate firm ownership in the specification.\footnote{A similar extension can be found in \cite{Peters2016} which treats financial strength as a determinant of the firm's R\&D costs.} Let $o_{it}$ be the variable indicating firm ownership: $o_{it}$ equals one for SOEs and zero otherwise. Now we assume the distribution of R\&D costs is given by:
+\begin{equation} \label{rd_costs_ext}
+    C_{it}\sim \exp\{rd_{it-1}\times(\kappa_m+\kappa_{mo} o_{it}) k_{it}+(1-rd_{it-1})\times(\kappa_s +\kappa_{so} o_{it})k_{it}\},
+\end{equation}
+where $\kappa_{mo}$ and $\kappa_{so}$ measure the effects of firm ownership on continuing and start-up R\&D costs, respectively. A negative $\kappa_{mo}$ ($\kappa_{so}$) implies that SOEs have lower maintenance (start-up) costs than non-SOEs conditional on their capital stocks. The estimation of the extended model is quite similar to the benchmark model; the only difference is that we now have two additional parameters $(\kappa_{mo}, \kappa_{so})$ to characterize the distribution of R\&D costs. 
+
+We have also tried to include the ownership variable $o_{it}$ and its interactions with $rd_{it}$, $rd_{it}\times n_{it+1}$, and $rd_{it}\times b_{it+1}$ in the productivity evolution equation, but the estimates of these variables shows no significance. This implies that the endogenous productivity equation for SOEs is not significantly different from the non-SOEs. Therefore we only consider adding $o_{it}$ in to the cost function and re-estimate the model. The estimation results are reported in the Appendix \ref{appc2}. 
 
 
 \section{Conclusion}
@@ -694,13 +769,17 @@ By allowing a flexible relationship between innovation and productivity, this pa
 
 
 \clearpage 
+\setcounter{equation}{0}
+\renewcommand{\theequation}{A.\arabic{equation}}
 \appendix 
 \appendixpage 
-\section{An Empirical Framework with Intensive-margin R\&D Investment}
-In this section, I first briefly lay out an extended dynamic model with R\&D investment and patents. The basic structure of the model is similar to that considered in \cite{Awetal.2011,Doraszelski2013,Peters2016, Peters2017rand}, with the exception that both R\&D and patents play a role in shifting the future productivity. 
+\section{Model Extensions}
 
-\subsection{A Model of R\&D Investment}
 
+\subsection{General R\&D costs Distributions} \label{gen_rdDist}
+
+\subsection{The Model with Intensive- and Extensive-margin of R\&D Investment} 
+In this subsection, I first briefly lay out an extended dynamic model with R\&D investment and patents. The basic structure of the model is similar to that considered in \cite{Awetal.2011,Doraszelski2013,Peters2016, Peters2017rand}, with the exception that both R\&D and patents play a role in shifting the future productivity. 
 \paragraph{Production and Profits} A firm has a Cobb-Douglas production function
 \begin{equation}
 Q_{it} = \Phi_{it}K_{it}^{\beta_{k}}L_{it}^{\beta_l}M_{it}^{\beta_m}\exp{(\beta_a a_{it})}
@@ -729,7 +808,6 @@ Following CDM, I assume that patents is a random variable of which the distribut
 
 Therefore R\&D investment can influence future productivity through affecting $h(\phi_{it}, d_{it},\mathbf{o})$ and the distribution of innovation output $G(\mathbf{o}; d_{it})$. This allows me to decompose the impact of R\&D into patenting and non-patenting channels.
 
-
 \paragraph{Recursive formulation}
 To consider a general setting, denote $C(d_{it}, \mathbf{X}_{it})$ as the variable costs of R\&D investment. Here $\mathbf{X}_{it}=(\mathbf{S}_{it}, \mathbf{Z}_{it})$, $\mathbf{Z}_{it}$ is the additional exogenous states that influence the costs of R\&D investment.\footnote{For example, $\mathbf{Z}_{it}$ may contain past R\&D investment decisions so the R\&D costs also include adjustment costs.} In addition, there is a fixed cost of R\&D investment, denoted as $f(\mathbf{X}_{it})$. With this fixed costs, the model can capture the innovation choice at the extensive margin. Note that we allow the exogenous state variables to affect the costs of R\&D. Omitting the subscripts, the firm's dynamic programming problem can be written in a recursive formulation:
 \begin{equation}\label{VF_full}
@@ -742,13 +820,13 @@ where the value functions for different choices of $d$ are
 \end{align}
 where $\beta$ is the discounting factor. We assume that firms have perfect foresight for the exogenous state variables. This allows us to calculate the expected firm value as
 \begin{equation}\label{EV_d}
-    \mathbf{E}\left[ V(\phi', \mathbf{X}')|d\right] = \int\int V(h(\phi,d,\mathbf{o})+\epsilon,\mathbf{X}')dG(\mathbf{o};d)dF(\epsilon)
+    \mathbf{E}\left[ V(\phi', \mathbf{X}')|d\right] = \int\int V(h(\phi,d,\mathbf{o})+\epsilon',\mathbf{X}')dG(\mathbf{o};d)dF(\epsilon')
 \end{equation}
 where $F(\cdot)$ is the distribution of $\epsilon'$. 
 A stochastic equilibrium of the model is a decision rule $d(\phi, \mathbf{X})\geq0$ such that the recursive problem (\ref{VF_full}) is solved.
 
-\section{Math Derivations} \label{app_revenue_equation}
-\subsection*{Profit maximization and revenue equation} \label{app_revenue_equation}
+\section{Math and Proofs} \label{app_revenue_equation}
+\subsection{Profit maximization and revenue equation} \label{app_revenue_equation}
 The firm's profits maximization problem is
 \begin{align*}
 \max_{L_{it},\,M_{it}} & \left\{ P_{it}Q_{it}-P_{Lt}L_{it}-P_{Mt}M_{it}\right\} \\
@@ -789,8 +867,137 @@ where
 \mu_{t} & =\left(1-\sigma\right)\ln\left(P_{Lt}^{\beta_{l}}P_{Mt}^{\beta_{m}}\right)+\ln\left(P_{t}^{\sigma}Q_{t}\right)
 \end{align}
 
-\section{Supplementary Results}
-\subsection{Data features} \label{app_data_features}
+\subsection{Effects of Various R\&D Subsidies} \label{subsidy_proofs}
+
+\subsubsection*{Proof of Proposition \ref{prop1}}
+We first show that the following lemma to simplify the algebra. 
+\begin{lemma}
+    Define that $\Delta_{it}\equiv EV_1(\phi_{it}, rd_{it-1})-EV_0(\phi_{it}, rd_{it-1})$The expected firm value under different subsidy programs can be expressed as:
+    \begin{align}
+    W_{Tit}^{prop}& = \pi(\phi_{it}) +\beta EV_0(\phi_{it}, rd_{it-1})+ \int_0^{\Delta_{it}}G(\frac{c}{\delta_T})dc\\
+    W_{Tit}^{lump}& = \pi(\phi_{it}) +\beta EV_0(\phi_{it}, rd_{it-1})+ \int_0^{\beta \Delta_{it}+(1-\delta_T)\gamma_{it}}G(c)dc 
+    \end{align}
+\end{lemma}
+
+\begin{proof}
+    Since the proof for obtaining $W_T^{prop}$ is similar to that for $W_T^{lump}$, here we only show the proof for $W_T^{prop}$ as below:
+\begin{align*}
+      W_{Tit}^{prop}
+        &=\pi(\phi_{it}) +\int_0^{\infty}\max \{\beta EV_0(\phi_{it}, rd_{it-1}), \beta EV_1(\phi_{it}, rd_{it-1}) - \delta_Tc\}dG(c) \\
+        & = \pi(\phi_{it}) + \int_0^{\infty}\max \{\beta EV_0(\phi_{it}, rd_{it-1}), \beta EV_1(\phi_{it}, rd_{it-1}) - c\}dG(c/\delta_T) \\
+        & = \pi(\phi_{it}) + \int_{0}^{\beta \Delta_{it}}(\beta EV_1-c)dG(c/\delta_T) +\int_{0}^{\infty}\beta EV_0dG(c/\delta_T) \\
+        & = \pi(\phi_{it}) +\beta EV_1G(\beta \Delta_{it}/\delta_T) - \int_0^{\beta \Delta_{it}}cdG(c/\delta_T) + \beta EV_0(1-G(\beta\Delta_{it}/\delta_T)) \\
+        & =  \pi(\phi_{it}) +\beta \Delta_{it}G(\beta \Delta_{it}/\delta_T) +\beta EV_0 -cG(c/\delta_T)\bigg|_{c=0}^{\beta\Delta_{it}}+\int_{0}^{\beta \Delta_{it}}G(c/\delta_T)dc \\
+        & = \pi(\phi_{it}) + \beta EV_0(\phi_{it}, rd_{it-1}) + \int_{0}^{\beta \Delta_{it}}G(c/\delta_T)dc 
+\end{align*}
+\end{proof}
+
+From now on, we omit the state variables in the value function and the subscripts $it$ as long as no confusion arises. Now we prove Proposition \ref{prop1} as follows: 
+
+\begin{proof}
+    \begin{enumerate}
+        \item  Using this Lemma, the difference between $W_T^{lump}$ and $W_T^{prop}$ is:
+        \begin{align*}
+           \Delta W(\delta_T) &= W_{T}^{lump} - W_{T}^{prop}   \\
+                & = \int_0^{\beta \Delta +(1-\delta_T)\gamma }G(c)dc - \int_0^{\beta \Delta }G(c/\delta_T)dc 
+        \end{align*}
+        Because $G(c)=1-\exp(c/\gamma)$, $\Delta W(\delta_T)$ can be expressed as:
+        \begin{align*}
+            \Delta W(\delta_T) & = \int_0^{\beta \Delta +(1-\delta_T)\gamma }\left[1-\exp \left(-\frac{c}{\gamma}\right)\right]dc-\int_0^{\beta \Delta }\left[1-\exp \left(-\frac{c}{\delta_T\gamma}\right)\right]dc \\
+                & = \gamma \left[\exp\left(-\frac{\beta \Delta +(1-\delta_T)\gamma}{\gamma}\right)-\delta_T\exp\left(-\frac{\beta\Delta}{\delta_T\gamma}\right)\right] \\
+        \end{align*}
+        This implies that 
+        \begin{align*}
+            \Delta W(\delta_T) >0  &\Leftrightarrow \exp\left(-\frac{\beta \Delta +(1-\delta_T)\gamma}{\gamma}\right)-\delta_T\exp\left(-\frac{\beta\Delta}{\delta_T\gamma}\right)>0 \\
+            &\Leftrightarrow \exp\left(\frac{\beta \Delta}{\gamma}\left(\frac{1}{\delta_T}-1\right)+\delta_T-1\right)>\delta_T
+        \end{align*}
+        Consider function $h(\delta_T)=\exp(\delta_T-1)-\delta_T$, then $h(\delta_T)'= \exp(\delta_T-1)-1\leq0$ when $\delta_T\in (0,1]$. $h(\delta_T)$ attains its minimum value at $\delta_T=1$, $h(\delta_T)_{\min}=h(1)=0$ for $\delta_T\in(0, 1]$. This shows that $\exp(\delta_T-1)>\delta_T$ for $\delta_T\in(0, 1)$. Combining that $e^{(\frac{\beta \Delta}{\gamma}(1/\delta_T-1))}>1$, we have $\exp\left(\frac{\beta \Delta}{\gamma}\left(\frac{1}{\delta_T}-1\right)+\delta_T-1\right)>\delta_T$. 
+
+        \item Take the difference between $P_{Tit}^{lump}$ and $P_{Tit}^{prop}$, we obtain that
+            \begin{align*}
+                P_{Tit}^{lump}-P_{Tit}^{prop}
+                    &=\exp\left(-\frac{\beta \Delta EV_{it}}{\delta_T\gamma_{it}}\right)-\exp \left(-\frac{\beta \Delta EV_{it}+(1-\delta_T)\gamma_{it}} {\gamma_{it}}\right) \\
+                    &=\exp\left(-\frac{\beta \Delta EV_{it}}{\delta_T\gamma_{it}}\right)\left\{1-\exp\left(\frac{\beta \Delta EV_{it}}{\gamma}\frac{1-\delta_T}{\delta_T}-(1-\delta_T)\right)\right\}.
+            \end{align*}
+            Hence the condition that $P_{Tit}^{lump}-P_{Tit}^{prop}>0$ is equivalent to $\exp\left[\frac{\beta \Delta EV_{it}}{\gamma}\frac{1-\delta_T}{\delta_T}-(1-\delta_T)\right]<1$, which implies $\delta_T>\beta \Delta EV_{it}/\gamma_{it}$.
+    \end{enumerate}
+\end{proof}
+
+\subsubsection*{Proof of Proposition \ref{prop2}}
+The proof of result 1 in Proposition \ref{prop2} is very similar to 
+what we have shown in the proof of the same result in Proposition \ref{prop1}; we only show the proof for result 2 as below.
+\begin{proof}
+The difference of expected firm value between the lump-sum subsidy and proportional subsidy is 
+\begin{equation*}
+    \Delta W(\delta_T) = \int_0^{\beta \Delta +(1-\delta_T)\bar{C}}G(c)dc-\int_0^{\beta \Delta}G(c/\delta_T)dc
+\end{equation*}
+
+    (1) $\delta_T>\beta \Delta/\bar{C}$: By change of variable $c_1 = c/\Delta_T$ for the second term of $\Delta W(\delta_T)$, we have 
+            \begin{align*}
+                \Delta W(\Delta_T)
+                    & = \int_0^{\beta \Delta +(1-\delta_T)\bar{C}}G(c)dc-\delta_T\int_0^{\beta \Delta/\delta_T}G(c)dc \\ 
+                    & > \int_0^{\beta \Delta +(1-\delta_T)\beta \Delta/\delta_T}G(c)dc-\delta_T\int_0^{\beta \Delta/\delta_T}G(c)dc \\
+                    & = (1-\delta_T)\int_0^{\beta \Delta/\delta_T}G(c)dc >0
+            \end{align*} 
+    (2) $\delta_T<\beta \Delta/\bar{C}$: Taking the derivative with respect to $\delta_T$ yields
+    \begin{align*}
+        \Delta W(\delta_T)' &=-\bar{C}  G\left(\beta \Delta +(1-\delta_T)\bar{C} \right)+\int_0^{\beta \Delta }\frac{c}{\delta_T^2}g(c/\delta_T)dc \\
+            &=-\bar{C}  G\left(\beta \Delta +(1-\delta_T)\bar{C} \right)+\int_0^{\frac{\beta\Delta}{\delta_T}}cg(c)dc,    
+    \end{align*}
+
+where the second equation is by the change of variable. Note that $$\lim_{\delta_T\rightarrow 0}\Delta W(\delta_T)'=-\bar{C}G(\beta \Delta+\bar{C})+\int_0^{\infty}cg(c)dc=\bar{C}(1-G(\beta \Delta+\bar{C}))>0.$$ Moreover, observe that the second-order derivative 
+\begin{align*}
+    \Delta W(\delta_T)'' &= \bar{C}^2 g(\beta\Delta+(1-\delta_T)\bar{C})-\frac{(\beta\Delta)^2}{\delta_T^3}g(\frac{\beta \Delta}{\delta_T})
+\end{align*}
+is an increasing function of $\delta_T$ whenever $g'(c)<0$. This implies that $\Delta W(\delta_T)''>\Delta W(\delta_T=\varepsilon)''$ for $0<\epsilon<\delta_T$. And that 
+
+$$\lim_{\varepsilon \rightarrow 0^{+}}\Delta W (\varepsilon)''=\bar{C}^2g(\beta \Delta+\bar{C})-(\beta \Delta)^{-1}\lim_{c\rightarrow \infty}\{c^3g(c)\}=\bar{C}^2g(\beta \Delta+\bar{C})>0$$
+
+Because $\Delta W(\delta_T)''$ is right-continuous at $0$, we have $\Delta W(\delta_T)''> \lim_{\varepsilon \rightarrow 0^{+}}\Delta W(\varepsilon)''>0$. This further implies that $\Delta W(\delta_T)'>0$ and $\Delta W(\delta_T)>\lim_{\delta_T\rightarrow 0^+}$. Note that
+\begin{align*}
+    \lim_{\delta_T\rightarrow 0^{+}} \Delta W(\delta_T)
+        & = \int_0^{\beta \Delta+\bar{C}} G(c)dc - \lim_{\delta_T\rightarrow 0^{+}}\int_0^{\beta \Delta}G(c/\delta_T)dc \\
+        & = \int_0^{\beta \Delta+\bar{C}} G(c)dc - \beta \Delta 
+\end{align*}
+Consider function $h(x) = \int_0^{x+\bar{C}}G(c)dc-x$, and its first-order derivative $h(x)'=G(x+\bar{C})-1\leq 0$, hence $h(x)$ is weakly decreasing in $x$. This indicates that
+\begin{align*}
+    \Delta W(\delta_T)
+        &> \lim_{\Delta \rightarrow \infty}\left\{\int_0^{\beta \Delta+\bar{C}} G(c)dc - \beta \Delta \right\} \\
+        &= \lim_{\Delta\rightarrow \infty} \left\{(\beta\Delta + \bar{C})G(\beta\Delta +\bar{C})-\int_0^{\beta \Delta +\bar{C}}cg(c)dc-\beta\Delta \right\} \\
+        &= \lim_{\Delta\rightarrow \infty}\left\{-\beta\Delta \left[1-G(\beta \Delta+\bar{C})\right]+\bar{C}G(\beta\Delta +\bar{C})-\int_0^{\beta \Delta +\bar{C}}cg(c)dc\right\} \\
+        &= \lim_{\Delta\rightarrow \infty}\left\{-\beta\Delta \left[1-G(\beta \Delta+\bar{C})\right]\right\}    
+\end{align*}
+Let $x = \beta\Delta$. Applying the L'Hospital's rule to evaluate the limit, we obtain that 
+\begin{align*}
+    \lim_{x \infty}\left\{x \left[1-G(x+\bar{C})\right]\right\}&= \lim _{x\rightarrow \infty} \left\{x^2g(x+\bar{C})\right\} \\
+            &= \lim_{x\rightarrow\infty}\left\{\frac{x^2}{(x+\bar{C})^3}(x+\bar{C})^3 g(x+\bar{C})\right\} \\
+            & = \lim_{x\rightarrow\infty}\left\{(x+\bar{C})^3 g(x+\bar{C})\right\}
+\end{align*}
+Therefore $\Delta W(\delta_T)>0$ when $\lim_{x\rightarrow\infty}\left\{t^3 g(t)\right\}>0$. 
+
+\end{proof} 
+
+\section{Data Appendix}
+\subsection{Characteristics of R\&D Starters and Continuers}
+In the table below, we display several firm characteristics for R\&D starters and continuers, respectively. 
+\begin{table}[h]
+    \centering 
+    \caption{Firm characteristics: Starters vs. Continuers}
+\label{T_add}
+    \begin{tabular}{llll}
+    \toprule
+    variables       & log(capital) & log(employees) & age   \\
+    \midrule
+    R\&D starters   & 8.38         & 4.75           & 16.16 \\
+    R\&D continuers & 8.77         & 4.93           & 18.10 \\
+    \midrule 
+    Total           & 8.50         & 4.80           & 16.76  \\
+    \bottomrule
+   \end{tabular}
+\end{table}
+
+
+\subsection{Data features of R\&D-Patents Relation} \label{app_data_features}
 In this appendix, I present more features of the
 data for Chinese high-tech manufacturing firms. In particular, I will discuss the distributional characteristics for patents and the R\&D-patents relation. These discussions suggest that the extensive margins of R\&D and patents captures most part of the innovation activities. 
 
@@ -846,7 +1053,7 @@ Utility&95.72\% & 4.28\% & 2.22\% & 0.96\% & 1.10\% \\ \bottomrule
 \multirow{2}{*}{both}                     & .883***   & 1.015      & 1.883***   & .780***  & 2.870      & 2.302***  \\
                                           & (.110)     & (2.497)    & (.327)    & (.107)    & (3.109)    & (.476)  \\ \bottomrule
 \end{tabular}
-\caption*{\small{}Note: all regression contain industry and year fixed effects. Results in columns (1) and (3) are obtained using all the sample; columns (2) and (4) display the results using observations with positive patent applications. Standad errors are in parentheses. * \(p<0.05\), ** \(p<0.01\), *** \(p<0.001\)} {\small \par}
+\caption*{\small{}Note: all regression contain industry and year fixed effects. Results in columns (1) and (3) are obtained using all the sample; columns (2) and (4) display the results using observations with positive patent applications. Standard errors are in parentheses. * \(p<0.05\), ** \(p<0.01\), *** \(p<0.001\)} {\small \par}
 \end{table}
 
 
@@ -885,6 +1092,7 @@ As a robustness check, we also try to parameterize $h(\cdot)$ as a quadratic fun
 \subsubsection{Discretizing non-linear Markov process}
 
 For this part, I refer to Farmer and Toda (2017). 
+(add more details here)
 
 \subsubsection{Nested fixed point algorithm}
 
@@ -896,33 +1104,35 @@ as:
 \begin{equation}
 \hat{r}_{it}\left(\hat{\omega}_{it}\right)=\hat{\psi}_{0}+\hat{\psi}_{t}+\left(1+\hat{\theta}_{j}\right)\hat{\rho}_{0}+\left(1+\hat{\theta}_{j}\right)\hat{\beta}_{k}k_{it}+\left(1+\hat{\theta}_{j}\right)\hat{\beta}_{a}a_{it}-\left(1+\hat{\theta}_{j}\right)\hat{\omega}_{it}
 \end{equation}
-It follows that the profit can be calculated as 
+After the normalization, it follows that the firm's profits can be calculated as 
 \begin{equation}
 \pi_{it}\left(\hat{\omega}_{it}\right)=-\frac{1}{\hat{\theta}_{j}}\exp\left(\hat{r}_{it}\left(\hat{\omega}_{it}\right)\right)
 \end{equation}
 
 \paragraph{Choose the grid points}
 
-We perform the computation by industry. Several coefficients are specific
+We compute by industry. Some coefficients are specific
 to each industry: $\psi_{0}$, $\rho_{0}$, and $\theta_{j}$. Note
 that we discretize the productivity into 200 grid points, and age
-into 4 groups. To implement the estimation, I use the trapezoid method
+into 4 groups. To implement the estimation, we use the trapezoid method
 to discretize the capital space in evenly distributed 100 points.
 Therefore, we are encountered with $100\times4\times4=1600$ types
 of firms. For each type of firm, we solve the value function for $100\times2=200$
-states. In the end, we solve $1600\times200=320000$ value functions.
-We compute the value function by industry by industry. 
+states. In the end, we solve $1600\times200=320,000$ value functions.
+We compute the value function by industry. 
 
+For the extended model with firm ownership, we add two points to specify the type of ownership. This requires us to solve $1600\times 200 \times 2 = 640,000$ value functions. The value function is also computed for each industry. 
+\subsubsection{Inner and outer loops}
 \paragraph{Inner loop: Value function iteration}
 
 Given $\left(\omega_{it},\,k_{it},\,a_{it}\right),$ we use $V_{d}$
 to denote $V\left(\omega_{it},rd_{it-1}=d;\,k_{it},a_{it}\right)$.
-We also define $\gamma_{it}^{d}\equiv\gamma_{it}\left(rd_{it-1}=d,k_{it};\,\kappa^{m},\,\kappa^{s}\right)$,
-for $d\in\left\{ 0,\,1\right\} $, and $\kappa\equiv\left(\kappa^{s},\,\kappa^{m}\right)$
-be the parameter to be estimated. Employing the exponential distribution,
+We also define $\gamma_{it}^{d}\equiv\gamma\left(rd_{it-1}=d,k_{it};\,\kappa_{m},\,\kappa_{s}\right)$,
+for $d\in\left\{ 0,\,1\right\} $, and $\boldsymbol{\kappa}\equiv\left(\kappa_{m},\,\kappa_{s}\right)$
+be the parameter to be estimated. Under this definition, we have  $\gamma_{it}^0=\kappa_s k_{it}$ and $\gamma_{it}^1=\kappa_m k_{it}$.\footnote{We only illustrate the benchmark case here. for the extended model with firm ownership, we only need to add parameters $\kappa_{mo}$ and $\kappa_{so}$ into the vector of parameters such that $\gamma_{it}^{d}=\gamma(rd_{it-1}=d, k_{it}; \kappa_m, \kappa_s, \kappa_{mo}, \kappa_{so})$ and $\boldsymbol{\kappa}\equiv(\kappa_m, \kappa_s, \kappa_{mo}, \kappa_{so})$. There we have $\gamma_{it}^0=\kappa_mk_{it}+\kappa_{mo}o_{it}$ and $\gamma_{it}^1=\kappa_sk_{it}+\kappa_{so}o_{it}$. The computation algorithm for the benchmark model still applies.} Employing the exponential distribution,
 we can express the value function as 
 \begin{align*}
-V_{d} & =\pi_{it}\left(\omega_{it}\right)+\beta\int_{0}^{\Delta EV}\left(EV_{1}-\tau\right)dG\left(\tau\right)+\beta\int_{\Delta EV}^{\infty}EV{}_{0}dG\left(\tau\right)\\
+V_{d} & =\pi_{it}\left(\omega_{it}\right)+\beta\int_{0}^{\Delta EV}\left(EV_{1}-c\right)dG\left(c\right)+\beta\int_{\Delta EV}^{\infty}EV{}_{0}dG\left(c\right)\\
  & =\pi_{it}\left(\omega_{it}\right)+\beta EV_{1}\left(1-e^{-\frac{\Delta\mathbb{E}V}{\gamma_{it}^{d}}}\right)+\beta\left(\Delta EV+\gamma_{it}^{d}\right)e^{-\frac{\Delta\mathbb{E}V}{\gamma_{it}^{d}}}\\
  & -\beta\gamma_{it}^{d}+\beta EV{}_{0}e^{-\frac{\Delta\mathbb{E}V}{\gamma_{it}^{d}}}
 \end{align*}
@@ -932,7 +1142,7 @@ can be simplified as
 V_{d}=\pi_{it}\left(\omega_{it}\right)+\beta\gamma_{it}^{d}\left(\exp\left(-\frac{\Delta EV}{\gamma_{it}^{d}}\right)-1\right)+\beta EV_{1},\,\text{for }d\in\left\{ 0,\,1\right\} \label{Vd}
 \end{equation}
 In computing the value functions, $V_{d}$ is a $200$ by 1 vector
-given capital, age, and industry. Let $p_{mn}=Pr\left(n_{t+1}=m,b_{t+1}=n|rd_{t}=1\right)$,
+given capital, age, and industry. Let $p_{mn}=\Pr\left(n_{t+1}=m,b_{t+1}=n|rd_{t}=1\right)$,
 for $m,\,n\in\left\{ 0,1\right\} $, and further denote $P_{mn}$
 as the corresponding transition matrix of the productivity and $P_{0}$
 as the transition matrix of productivity when $rd_{t}=0$. then Equation
@@ -941,7 +1151,7 @@ as the transition matrix of productivity when $rd_{t}=0$. then Equation
 V_{1} & =\pi\left(\omega\right)-\beta\gamma^{1}\left(1-\exp\left(-\frac{\Delta EV}{\gamma^{1}}\right)\right)+\beta\left(\sum_{m}\sum_{n}p_{mn}P_{mn}\right)V_{1}\label{V1}\\
 V_{0} & =\pi\left(\omega\right)-\beta\gamma^{0}\left(1-\exp\left(-\frac{\Delta EV}{\gamma^{0}}\right)\right)+\beta\left(\sum_{m}\sum_{n}p_{mn}P_{mn}\right)V_{1}\label{V0}
 \end{align}
-Denote $P_{1}=\beta\left(\sum_{m}\sum_{n}p_{mn}P_{mn}\right)$, then
+Denote $P_{1}=\left(\sum_{m}\sum_{n}p_{mn}P_{mn}\right)$, then
 \[
 V_{1}=\left(I-\beta P_{1}\right)^{-1}\left[\pi\left(\omega\right)-\beta\gamma^{1}\left(1-\exp\left(-\frac{\Delta EV}{\gamma^{1}}\right)\right)\right]
 \]
@@ -956,9 +1166,9 @@ $V_{0}$. Use $T_{\kappa}$ as the linear operator applied to $\Delta EV$,
 it is easy to show that $T_{\kappa}$ is a contraction mapping. Then
 $\Delta EV$ is a fixed point such that 
 \[
-T_{\kappa}\left(\Delta EV\right)=\Delta EV
+T_{\kappa}\left(\Delta EV\right)=\Delta EV.
 \]
-.Now we are in the position to use Newton-Kantorovich iterations.
+Now we are in the position to use Newton-Kantorovich iterations.
 First note that the Frech\'{e}t derivative of $T_{\kappa}$ with
 respect to $\Delta EV$ is:
 \begin{align}
@@ -986,66 +1196,69 @@ We set the tolerance as $e^{-6}$; the iteration stops when $\|\Delta EV_{n+1}-\D
 
 The outer loop solves following problem:
 \[
-\max_{\kappa^{s},\kappa^{m}}\sum_{i}\sum_{t}l_{it}\left(\kappa,\,\Delta EV_{it}\right)
+\max_{\kappa_{s},\kappa_{m}}\sum_{i}\sum_{t}l_{it}\left(\boldsymbol{\kappa},\,\Delta EV_{it}\right)
 \]
  where 
 \begin{align}
-l_{it}\left(\kappa,\,\Delta EV_{it}\right) & =\log\left\{ rd_{it}Pr\left(rd_{it}=1|\kappa,rd_{it-1}\right)+\left(1-rd_{it}\right)Pr\left(rd_{it}=0|\kappa,rd_{it-1}\right)\right\} \label{llf}\\
+l_{it}\left(\boldsymbol{\kappa},\,\Delta EV_{it}\right) & =\log\left\{ rd_{it}\Pr\left(rd_{it}=1|\kappa,rd_{it-1}\right)+\left(1-rd_{it}\right)\Pr\left(rd_{it}=0|\kappa,rd_{it-1}\right)\right\} \label{llf}\\
  & =\log\left\{ \left(2rd_{it}-1\right)\Pr\left(rd_{it}=1|\kappa,rd_{it-1}\right)+1-rd_{it}\right\} \nonumber 
 \end{align}
-where $\Delta EV_{it}=\Delta EV\left(\omega_{it}\right)$ and 
+where $\Delta EV_{it}=\Delta EV\left(\omega_{it}\right)$ and\footnote{In the extended model with firm ownership, this equation becomes
+\begin{equation*}
+    \Pr\left(rd_{it}=0|\boldsymbol{\kappa},rd_{it-1}\right) = \exp\left\{ \frac{-\beta\Delta EV\left(\omega_{it}\right)}{\kappa_{m}rd_{it-1}k_{it}+\kappa_{s}\left(1-rd_{it-1}\right)k_{it}+\kappa_{so}\left(1-rd_{it-1}\right)o_{it}+\kappa_{mo}rd_{it-1}o_{it}}\right\}
+\end{equation*}} 
 \begin{align}
-Pr\left(rd_{it}=0|\kappa,rd_{it-1}\right) & =1-Pr\left(rd_{it}=1|\kappa,rd_{it-1}\right)\\
- & =\exp\left\{ \frac{-\beta\Delta EV\left(\omega_{it}\right)}{\kappa^{m}rd_{it-1}k_{it}+\kappa^{s}\left(1-rd_{it-1}\right)k_{it}}\right\} \nonumber 
+\Pr\left(rd_{it}=0|\boldsymbol{\kappa},rd_{it-1}\right) & =1-\Pr\left(rd_{it}=1|\boldsymbol{\kappa},rd_{it-1}\right)\\
+ & =\exp\left\{ \frac{-\beta\Delta EV\left(\omega_{it}\right)}{\kappa_{m}rd_{it-1}k_{it}+\kappa_{s}\left(1-rd_{it-1}\right)k_{it}}\right\}. \nonumber 
 \end{align}
 The basic parameter iteration under BHHH algorithm is:
 \begin{align*}
-\kappa_{n+1} & =\kappa_{n}+\lambda\underset{\equiv D\left(\kappa_{n}\right)}{\underbrace{\left[\sum_{i,t}\left(\frac{\partial l_{it}\left(\kappa_{n},\,\Delta EV_{it}\right)}{\partial\kappa_{n}}\right)\left(\frac{\partial l_{it}\left(\kappa_{n},\,\Delta EV_{it}\right)}{\partial\kappa_{n}'}\right)\right]^{-1}\left(\sum_{i,t}\frac{\partial l_{it}\left(\kappa_{n},\,\Delta\right)}{\partial\kappa_{n}}\right)}}
+\boldsymbol{\kappa}^{n+1} & =\boldsymbol{\kappa}^{n}+\lambda\underset{\equiv D\left(\boldsymbol{\kappa}^{n}\right)}{\underbrace{\left[\sum_{i,t}\left(\frac{\partial l_{it}\left(\boldsymbol{\kappa}^{n},\,\Delta EV_{it}\right)}{\partial\boldsymbol{\kappa}^{n}}\right)\left(\frac{\partial l_{it}\left(\boldsymbol{\kappa}^{n},\,\Delta EV_{it}\right)}{\partial(\boldsymbol{\kappa}^{n})'}\right)\right]^{-1}\left(\sum_{i,t}\frac{\partial l_{it}\left(\boldsymbol{\kappa}^{n},\,\Delta\right)}{\partial\boldsymbol{\kappa}^{n}}\right)}}
 \end{align*}
 From (\ref{llf}) we know that 
 \begin{equation}
-\frac{\partial l_{it}\left(\kappa_{n},\,\Delta EV_{it}\right)}{\partial\kappa_{n}'}=w_{it}\left[\frac{\partial Pr\left(rd_{it}=1|\kappa,rd_{it-1}\right)}{\partial\kappa_{n}^{s}},\,\frac{\partial Pr\left(rd_{it}=1|\kappa,rd_{it-1}\right)}{\partial\kappa_{n}^{m}}\right]
+\frac{\partial l_{it}\left(\boldsymbol{\kappa}^{n},\,\Delta EV_{it}\right)}{\partial(\boldsymbol{\kappa}^{n})'}=w_{it}\left[\frac{\partial Pr\left(rd_{it}=1|\boldsymbol{\kappa},rd_{it-1}\right)}{\partial\boldsymbol{\kappa}_{s}^{n}},\,\frac{\partial Pr\left(rd_{it}=1|\boldsymbol{\kappa},rd_{it-1}\right)}{\partial\boldsymbol{\kappa}_{m}^{n}}\right]
 \end{equation}
 where
 \begin{align*}
-w_{it} & =\frac{\left(2rd_{it}-1\right)}{\left(2rd_{it}-1\right)\Pr\left(rd_{it}=1|\kappa,rd_{it-1}\right)+1-rd_{it}}\\
-\frac{\partial Pr\left(rd_{it}=1|\kappa,rd_{it-1}\right)}{\partial\kappa_{n}^{s}} & =\beta\frac{\frac{\partial\Delta EV_{it}}{\partial\kappa_{n}^{s}}\gamma_{it}^{rd_{it-1}}-\left(1-rd_{it-1}\right)k_{it}\Delta EV_{it}}{\left(\gamma_{it}^{rd_{it-1}}\right)^{2}\exp\left(\frac{\beta\Delta EV_{it}}{\gamma_{it}^{rd_{it-1}}}\right)}\\
-\frac{\partial Pr\left(rd_{it}=1|\kappa,rd_{it-1}\right)}{\partial\kappa_{n}^{m}} & =\beta\frac{\frac{\partial\Delta EV_{it}}{\partial\kappa_{n}^{m}}\gamma_{it}^{rd_{it-1}}-rd_{it-1}k_{it}\Delta EV_{it}}{\left(\gamma_{it}^{rd_{it-1}}\right)^{2}\exp\left(\frac{\beta\Delta EV_{it}}{\gamma_{it}^{rd_{it-1}}}\right)}
+w_{it} & =\frac{\left(2rd_{it}-1\right)}{\left(2rd_{it}-1\right)\Pr\left(rd_{it}=1|\boldsymbol{\kappa},rd_{it-1}\right)+1-rd_{it}}\\
+\frac{\partial Pr\left(rd_{it}=1|\boldsymbol{\kappa},rd_{it-1}\right)}{\partial\boldsymbol{\kappa}_{s}^{n}} & =\beta\frac{\frac{\partial\Delta EV_{it}}{\partial\boldsymbol{\kappa}_{s}^{n}}\gamma_{it}^{rd_{it-1}}-\left(1-rd_{it-1}\right)k_{it}\Delta EV_{it}}{\left(\gamma_{it}^{rd_{it-1}}\right)^{2}\exp\left(\frac{\beta\Delta EV_{it}}{\gamma_{it}^{rd_{it-1}}}\right)}\\
+\frac{\partial Pr\left(rd_{it}=1|\boldsymbol{\kappa},rd_{it-1}\right)}{\partial\boldsymbol{\kappa}_{m}^{n}} & =\beta\frac{\frac{\partial\Delta EV_{it}}{\partial\boldsymbol{\kappa}_{n}^{m}}\gamma_{it}^{rd_{it-1}}-rd_{it-1}k_{it}\Delta EV_{it}}{\left(\gamma_{it}^{rd_{it-1}}\right)^{2}\exp\left(\frac{\beta\Delta EV_{it}}{\gamma_{it}^{rd_{it-1}}}\right)}
 \end{align*}
-where $\frac{\partial\Delta EV_{it}}{\partial\kappa^{s}}$ ($\frac{\partial\Delta EV_{it}}{\partial\kappa^{m}}$)
+where $\frac{\partial\Delta EV_{it}}{\partial\boldsymbol{\kappa}_{s}}$ ($\frac{\partial\Delta EV_{it}}{\partial\boldsymbol{\kappa}_{m}}$)
 is the element in 1st (2nd) column such that the corresponding productivity
 in the row is $\omega_{it}$. To finish the nested fixed point algorithm,
 we need to compute the derivatives of the expected value function,
 $\partial\Delta EV/\partial\gamma$. Applying the implicit theorem
-to $T_{\kappa}\left(\Delta EV\right)=\Delta EV$, we get 
+to $T_{\boldsymbol{\kappa}}\left(\Delta EV\right)=\Delta EV$, we get 
 \[
-\frac{\partial\Delta EV}{\partial\kappa}=\left[I-T_{\kappa}'\right]^{-1}\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa}
+\frac{\partial\Delta EV}{\partial\boldsymbol{\kappa}}=\left[I-T_{\boldsymbol{\kappa}}'\right]^{-1}\frac{\partial T_{\boldsymbol{\kappa}}\left(\Delta EV\right)}{\partial\boldsymbol{\kappa}}
 \]
 From (\ref{DEV}), we know that 
 \begin{align*}
-\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa} & =\left[\begin{array}{cc}
-\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa^{s}} & ,\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa^{m}}\end{array}\right]
+\frac{\partial T_{\boldsymbol{\kappa}}\left(\Delta EV\right)}{\partial\boldsymbol{\kappa}} & =\left[\begin{array}{cc}
+\frac{\partial T_{\boldsymbol{\kappa}}\left(\Delta EV\right)}{\partial\kappa_{s}} & ,\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa_{m}}\end{array}\right]
 \end{align*}
 where 
 \begin{align*}
-\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa^{m}} & =\beta k\left(\beta P_{0}-I\right)P_{1}\left(I-\beta P_{1}\right)^{-1}\left[1-\exp\left(\frac{-\Delta EV}{\gamma^{1}}\right)-\frac{\Delta EV}{\gamma^{1}}\varodot\exp\left(\frac{-\Delta EV}{\gamma^{1}}\right)\right]\\ 
-\frac{\partial T_{\kappa}\left(\Delta EV\right)}{\partial\kappa^{s}} & =\beta kP_{0}\left[1-\exp\left(\frac{-\Delta EV}{\gamma^{0}}\right)-\frac{\Delta EV}{\gamma^{0}}\varodot\exp\left(\frac{-\Delta EV}{\gamma^{0}}\right)\right]
+\frac{\partial T_{\boldsymbol{\kappa}}\left(\Delta EV\right)}{\partial\kappa_{m}} & =\beta k\left(\beta P_{0}-I\right)P_{1}\left(I-\beta P_{1}\right)^{-1}\left[1-\exp\left(\frac{-\Delta EV}{\gamma^{1}}\right)-\frac{\Delta EV}{\gamma^{1}}\varodot\exp\left(\frac{-\Delta EV}{\gamma^{1}}\right)\right]\\ 
+\frac{\partial T_{\boldsymbol{\kappa}}\left(\Delta EV\right)}{\partial\kappa_{s}} & =\beta kP_{0}\left[1-\exp\left(\frac{-\Delta EV}{\gamma^{0}}\right)-\frac{\Delta EV}{\gamma^{0}}\varodot\exp\left(\frac{-\Delta EV}{\gamma^{0}}\right)\right]
 \end{align*}
 are both $200$-by-$1$ vectors and $k$ is the exogenous state variable:
 capital stock. We use $\varodot$ to denote the element-wise product.
 To determine the step size $\lambda,$ we use secant iteration to
-find the solution to $\partial f\left(\lambda\right)/\partial\kappa=0$,
-where $f\left(\lambda\right)\equiv L\left(\kappa+\lambda D\left(\kappa\right)\right)$.
+find the solution to $\partial f\left(\lambda\right)/\partial\boldsymbol{\kappa}=0$,
+where $f\left(\lambda\right)\equiv L\left(\boldsymbol{\kappa}+\lambda D\left(\boldsymbol{\kappa}\right)\right)$.
 The iteration is given as:
 \begin{equation}
-\lambda_{m+1}=\lambda_{m}-\frac{\left(\lambda_{m}-\lambda_{m-1}\right)f'\left(\lambda_{m}\right)}{f'\left(\lambda_{m}\right)-f'\left(\lambda_{m-1}\right)}
+\lambda^{m+1}=\lambda^{m}-\frac{\left(\lambda^{m}-\lambda^{m-1}\right)f'\left(\lambda^{m}\right)}{f'\left(\lambda^{m}\right)-f'\left(\lambda^{m-1}\right)}
 \end{equation}
 where 
 \begin{equation}
-f'\left(\lambda_{m}\right)=\sum_{i,t}\frac{\partial l_{it}\left(\kappa+\lambda_{m}D\left(\kappa_{n}\right),\,\Delta EV_{it}\right)}{\partial\kappa'}D\left(\kappa_{n}\right)
+f'\left(\lambda^{m}\right)=\sum_{i,t}\frac{\partial l_{it}\left(\boldsymbol{\kappa}+\lambda^{m}D\left(\boldsymbol{\kappa}_{n}\right),\,\Delta EV_{it}\right)}{\partial\boldsymbol{\kappa}'}D\left(\boldsymbol{\kappa}_{n}\right)
 \end{equation}
 This iteration determines the optimal step size $\lambda^{*}$. Finally,
-the iteration stops when $\|\kappa_{n+1}-\kappa_{n}\|\leq e^{-6}$. 
+the iteration stops when $\|\boldsymbol{\kappa}^{n+1}-\boldsymbol{\kappa}^{n}\|\leq 1e^{-6}$. 
 
 \subsection{Model fit} \label{app_model_fit}
 \subsubsection{Predicted revenues} In Figure \ref{F3}, I present a scatter plot to check the relationship between the model predicted revenue and the revenue information in the data. We can see that the predicted revenues concentrates around the 45-degree line, which indicates the revenue equation fits the data well. 
